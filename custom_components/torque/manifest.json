@@ -1,0 +1,8 @@
+{
+  "domain": "torque",
+  "name": "Torque 2025",
+  "version": "1.0.0",
+  "requirements": [],
+  "dependencies": [],
+  "codeowners": ["@ClassicRed"]
+}
