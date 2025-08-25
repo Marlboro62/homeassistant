@@ -1,7 +1,8 @@
 {
-  "name": "Torque 2025",
+  "name": "Torque Integration",
   "content_in_root": false,
-  "domain": "torque2025",
-  "country": "FR",
-  "homeassistant": "2024.0.0"
+  "domains": ["sensor"],
+  "zip_release": false,
+  "filename": "custom_components/torque",
+  "render_readme": true
 }
