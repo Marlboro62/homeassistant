@@ -4,5 +4,8 @@
   "version": "1.0.0",
   "requirements": [],
   "dependencies": [],
-  "codeowners": ["@Marlboro62"]
+  "codeowners": ["@Marlboro62"],
+  "config_entries": {
+    "supported": true
+  }
 }
