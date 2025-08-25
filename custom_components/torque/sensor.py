@@ -3,10 +3,10 @@
 from __future__ import annotations
 
 import re
-
-from aiohttp import web
 import voluptuous as vol
+from aiohttp import web
 
+from homeassistant import config_entries
 from homeassistant.components.http import HomeAssistantView
 from homeassistant.components.sensor import (
     PLATFORM_SCHEMA as SENSOR_PLATFORM_SCHEMA,
@@ -41,11 +41,10 @@ PLATFORM_SCHEMA = SENSOR_PLATFORM_SCHEMA.extend(
     }
 )
 
-
+# Fonction pour convertir les pids
 def convert_pid(value):
     """Convert pid from hex string to integer."""
     return int(value, 16)
-
 
 async def async_setup_platform(
     hass: HomeAssistant,
@@ -56,11 +55,15 @@ async def async_setup_platform(
     """Set up the Torque platform."""
     vehicle: str | None = config.get(CONF_NAME)
     email: str | None = config.get(CONF_EMAIL)
-    sensors: dict[int, TorqueSensor] = {}
+    sensors: dict[int, TorqueSensor] = hass.data.get(DOMAIN, {}).get("sensors", {})
 
     hass.http.register_view(
         TorqueReceiveDataView(email, vehicle, sensors, async_add_entities)
     )
+
+    # Ajout des capteurs existants au démarrage
+    existing_sensors = [sensor for sensor in sensors.values()]
+    async_add_entities(existing_sensors)
 
 
 class TorqueReceiveDataView(HomeAssistantView):
@@ -136,6 +139,7 @@ class TorqueSensor(SensorEntity):
         self._name = name
         self._unit = unit
         self._state = None
+        self._unique_id = f"torque_{name.replace(' ', '_')}"  # Unique ID for persistence
 
     @property
     def name(self):
@@ -162,3 +166,28 @@ class TorqueSensor(SensorEntity):
         """Receive an update."""
         self._state = value
         self.async_write_ha_state()
+
+    @property
+    def unique_id(self):
+        """Return the unique ID for this sensor."""
+        return self._unique_id
+
+
+# Ajouter l'intégration automatique via config entry
+async def async_setup_entry(
+    hass: HomeAssistant, entry: config_entries.ConfigEntry
+) -> bool:
+    """Set up the Torque platform from a config entry."""
+    email = entry.data[CONF_EMAIL]
+    vehicle = entry.data[CONF_NAME]
+    sensors: dict[int, TorqueSensor] = {}
+
+    # Créer les entités de capteurs de manière automatique
+    hass.http.register_view(
+        TorqueReceiveDataView(email, vehicle, sensors, lambda x: None)
+    )
+
+    # Initialiser les capteurs
+    hass.data.setdefault(DOMAIN, {})["sensors"] = sensors
+
+    return True
