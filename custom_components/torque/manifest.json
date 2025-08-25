@@ -1,8 +1,8 @@
 {
   "domain": "torque",
-  "name": "Torque 2025",
+  "name": "Torque Integration",
   "version": "1.0.0",
   "requirements": [],
   "dependencies": [],
-  "codeowners": ["@ClassicRed"]
+  "codeowners": ["@Marlboro62"]
 }
