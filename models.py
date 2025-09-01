@@ -1597,10 +1597,14 @@ class VideoTrimRequest(models.Model):
         return f"Trim request for {self.media.title} ({self.status})"
 
 
+import re
+import os
+
+import re
+import os
+
 @receiver(post_save, sender=Media)
 def media_save(sender, instance, created, **kwargs):
-    # media_file path is not set correctly until model is saved
-    # post_save signal will take care of calling a few functions
     if not instance.friendly_token:
         return False
 
@@ -1609,14 +1613,14 @@ def media_save(sender, instance, created, **kwargs):
 
         # Formater le titre à partir du nom du fichier si vide
         if not instance.title:
-            title = helpers.get_file_name(instance.media_file.path)
-            # remplacer - et _ par des espaces
-            title = title.replace("-", " ").replace("_", " ")
-            # garder lettres, chiffres et espaces
+            filename = os.path.splitext(os.path.basename(instance.media_file.path))[0]
+            # Remplacer les tirets et underscores par des espaces
+            title = filename.replace("-", " ").replace("_", " ")
+            # Garder uniquement les lettres, les chiffres et les espaces
             title = re.sub(r'[^0-9a-zA-Z\s]', '', title)
-            # réduire les espaces multiples à un seul
+            # Réduire les espaces multiples à un seul et supprimer les espaces en début/fin
             title = re.sub(r'\s+', ' ', title).strip()
-            # tronquer si trop long
+            # Tronquer si trop long
             instance.title = title[:99]
             instance.save(update_fields=["title"])
 
@@ -1634,6 +1638,8 @@ def media_save(sender, instance, created, **kwargs):
             tag.update_tag_media()
 
     instance.update_search_vector()
+
+
 
 
 
