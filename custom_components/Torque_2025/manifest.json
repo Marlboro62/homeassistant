@@ -1,0 +1,11 @@
+{
+  "domain": "torque_2025",
+  "name": "Torque 2025 Integration",
+  "version": "1.0.0",
+  "requirements": [],
+  "dependencies": [],
+  "codeowners": ["@Marlboro62"],
+  "config_entries": {
+    "supported": true
+  }
+}
