@@ -79,8 +79,11 @@ Dans **Torque Pro** :
    *(Data Logging & Upload → Upload to Web Server)*.
 2. **URL du serveur :**
 http(s)://VOTRE_HA:PORT/api/torque_logger_2025
-3. *(Conseillé)* Renseignez **votre email** dans Torque (champ envoyé en `eml=...`) — il doit **correspondre** si vous avez activé le filtre côté intégration.
-4. Laissez Torque envoyer ses paramètres par défaut (`session`, `id`, `eml`, `profileName`, `time`, `kXX`, etc.).
+<p>
+  <img alt="URL du serveur" src="https://img.shields.io/badge/URL%20du%20serveur-http(s)%3A%2F%2FVOTRE_HA%3APORT%2Fapi%2Ftorque_logger_2025-red?logo=link&logoColor=white&style=for-the-badge">
+</p>
+4. *(Conseillé)* Renseignez **votre email** dans Torque (champ envoyé en `eml=...`) — il doit **correspondre** si vous avez activé le filtre côté intégration.
+5. Laissez Torque envoyer ses paramètres par défaut (`session`, `id`, `eml`, `profileName`, `time`, `kXX`, etc.).
 
 > 💡 L’endpoint n’exige pas d’authentification par défaut (upload direct depuis le téléphone).  
 > Si votre HA est **exposé sur Internet**, **protégez-le** (reverse proxy, VPN, allow-list IP) ou utilisez le **filtre email**.
@@ -178,5 +181,6 @@ Ajustez la **fréquence d’upload** dans Torque pour éviter de surcharger la b
 <p align="center">
   <sub>Envie de contribuer ? Ouvrez une <em>issue</em> / PR. Captures bienvenues (placez-les dans <code>docs/</code>) ✨</sub>
 </p>
+
 
 
