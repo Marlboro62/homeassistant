@@ -110,7 +110,29 @@ Les capteurs sont créés **automatiquement** à partir des PIDs connus déclar�
 - Les PIDs GPS **non positionnels** (*cap*, altitude, précision, satellites, **vitesse GPS**, etc.) sont exposés en **capteurs classiques**.
 - En cas de **conflit de nom**, le **nom du capteur** est **suffixé** par le code PID *(p. ex. `-0d`, `-ff1001`)* afin de rester **unique**.
 
+<a id="supprimer-vehicule"></a>
+## 🗑️ Supprimer un véhicule (sans enlever l’intégration)
 
+**Chemin UI :** `Paramètres` → `Appareils & Services` → `Appareils` → *sélectionnez le véhicule* → menu `⋮` → **Supprimer l’appareil**.
 
+L’intégration **oublie** alors ce véhicule et **nettoie** ses références internes.
 
+<a id="depannage"></a>
+## 🧰 Dépannage
 
+- **400: Bad Request** : la requête n’a **pas de `session`**. Torque l’envoie normalement → vérifiez l’URL de l’endpoint et votre test `curl`.
+- **Aucun capteur créé** : envoyez au moins **un PID connu** avec **métadonnées** (`userFullNameXX`, `userShortNameXX`, `defaultUnitXX`, `kXX`) **et** un `profileName` (nom du véhicule).
+- **Rien n’apparaît avec filtre e-mail** : le paramètre `eml=` dans la requête doit **correspondre exactement** à l’e-mail configuré dans l’intégration.
+- **Position GPS absente** : pour créer le `device_tracker`, Torque doit envoyer **`gpslat`** et **`gpslon`** (pas seulement la vitesse GPS). Vérifiez les permissions **Localisation** d’Android pour Torque.
+- **Noms en doublon / capteurs dupliqués** : si deux PIDs partagent le même *short name*, un suffixe `-<pid>` est ajouté automatiquement (ex. `-0d`, `-ff1001`). Renommez vos *short names* côté Torque si nécessaire.
+- **Unités / langue incorrectes** : modifiez ces options via **Options** de l’intégration (redémarrez HA si demandé).
+- **404 / 403** : vérifiez le chemin **`/api/torque_logger_2025`**, le schéma (`http`/`https`), le port de HA et les règles de votre reverse-proxy / pare-feu.
+- **Trop de requêtes** : réduisez la fréquence d’upload dans Torque (**5–10 s** suffisent) pour éviter la surcharge.
+- **Logs utiles** : ouvrez *Paramètres → Système → Journaux* ou le fichier `home-assistant.log` et cherchez `torque_logger_2025` (passez en niveau `DEBUG` si besoin).
+
+### Exemple de test rapide
+
+# Test minimal avec session + profil + 1 PID connu
+```bash
+curl "http://HA:8123/api/torque_logger_2025?session=A1&id=devA&profileName=Ma%20Voiture&time=1694090000&userFullName0d=Vehicle%20speed&userShortName0d=speed&defaultUnit0d=km/h&k0d=250"
+```
