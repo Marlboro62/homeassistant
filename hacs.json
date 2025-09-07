@@ -1,7 +1,5 @@
 {
-  "name": "Torque 2025",
-  "content_in_root": false,
-  "domain": "torque2025",
-  "country": "FR",
-  "homeassistant": "2024.0.0"
+    "name":  "Torque Logger 2025",
+    "content_in_root":  false,
+    "render_readme":  true
 }
