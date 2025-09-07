@@ -101,18 +101,16 @@ curl "http://HA:8123/api/torque_logger_2025?session=A1&id=devA&eml=votre@mail.tl
 ```
 
 <a id="capteurs-gps"></a>
-
 ## 🛰️ Capteurs & suivi GPS
-#
-W Les capteurs sont créés à partir des PIDs connus déclarés dans TORQUE_CODES
-> (voir custom_components/torque_logger_2025/const.py).
-#
-> gpslat / gpslon créent un device_tracker (source GPS).
-#
-> Les PIDs GPS non position (cap, altitude, précision, satellites, vitesse GPS, etc.)
-> sont des capteurs classiques.
-#
-> En cas de conflit de nom, le PID est suffixé (ex. -0d, -ff1001) pour rester unique.
+
+Les capteurs sont créés **automatiquement** à partir des PIDs connus déclarés dans `TORQUE_CODES`  
+*(voir `custom_components/torque_logger_2025/const.py`).*
+
+- `gpslat` / `gpslon` **créent** un `device_tracker` (source GPS).
+- Les PIDs GPS **non positionnels** (*cap*, altitude, précision, satellites, **vitesse GPS**, etc.) sont exposés en **capteurs classiques**.
+- En cas de **conflit de nom**, le **nom du capteur** est **suffixé** par le code PID *(p. ex. `-0d`, `-ff1001`)* afin de rester **unique**.
+
+
 
 
 
