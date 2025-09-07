@@ -1,4 +1,4 @@
-# 🚗 {BETA] Torque Logger 2025 — Intégration Home Assistant
+# 🚗 [BETA] Torque Logger 2025 — Intégration Home Assistant
 
 **Domaine :** `torque_logger_2025` · **Version :** `2025.09.0b1` · **IoT class :** `local_push`
 
@@ -189,4 +189,5 @@ Ajustez la **fréquence d’upload** dans Torque pour éviter de surcharger la b
 <p align="center">
   <sub>Envie de contribuer ? Ouvrez une <em>issue</em> / PR. Captures bienvenues (placez-les dans <code>docs/</code>) ✨</sub>
 </p>
+
 
