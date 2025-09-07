@@ -54,7 +54,7 @@ C’est simple, rapide, et prêt pour vos tableaux de bord de passionné. 🔧�
 1. Assurez-vous d’avoir **HACS** installé dans Home Assistant.
 2. Ouvrez **HACS → Intégrations → ⋮ → Dépôts personnalisés** (*Custom repositories*).
 3. Ajoutez ce dépôt :  
-   **`https://github.com/Marlboro62/homeassistant integration`**  
+   **`https://github.com/Marlboro62/homeassistant`**  
    *(Type : **Intégration**)*  
    > ⚠️ Vérifiez qu’il n’y a **pas d’espace** dans l’URL si vous copiez/collez.
 4. Dans **HACS → Intégrations**, recherchez **“Torque Logger 2025”**, installez.
@@ -189,6 +189,7 @@ Ajustez la **fréquence d’upload** dans Torque pour éviter de surcharger la b
 <p align="center">
   <sub>Envie de contribuer ? Ouvrez une <em>issue</em> / PR. Captures bienvenues (placez-les dans <code>docs/</code>) ✨</sub>
 </p>
+
 
 
 
