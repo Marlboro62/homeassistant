@@ -136,3 +136,12 @@ L’intégration **oublie** alors ce véhicule et **nettoie** ses références i
 ```bash
 curl "http://HA:8123/api/torque_logger_2025?session=A1&id=devA&profileName=Ma%20Voiture&time=1694090000&userFullName0d=Vehicle%20speed&userShortName0d=speed&defaultUnit0d=km/h&k0d=250"
 ```
+
+<a id="notes-techniques"></a>
+## 🧠 Notes techniques
+
+- **Endpoint** : `GET /api/torque_logger_2025`
+- **Filtre e-mail** : si configuré, seuls les paquets dont `eml` correspond sont traités.
+- **Localisation** : libellés **fr / en**.
+- **Conversions** : via **pint** *(km↔mi, °C↔°F, km/h↔mph, m↔ft)*.
+- **Instance unique** : une seule instance de l’intégration est supportée.
