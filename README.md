@@ -3,7 +3,7 @@
 **Domaine :** `torque_logger_2025` · **Version :** `2025.09.0b1` · **IoT class :** `local_push`
 
 <p align="center">
-  <img src="docs/icon.png" alt="Torque Logger 2025" width="256">
+  <img src="docs/icon.png" alt="Torque Logger 2025" width="128">
 </p>
 <p align="center">
   <a href="https://img.shields.io/badge/version-2025.09.0b1-blue.svg"><img alt="Version" src="https://img.shields.io/badge/version-2025.09.0b1-blue.svg"></a>
@@ -189,6 +189,7 @@ Ajustez la **fréquence d’upload** dans Torque pour éviter de surcharger la b
 <p align="center">
   <sub>Envie de contribuer ? Ouvrez une <em>issue</em> / PR. Captures bienvenues (placez-les dans <code>docs/</code>) ✨</sub>
 </p>
+
 
 
 
