@@ -145,3 +145,37 @@ curl "http://HA:8123/api/torque_logger_2025?session=A1&id=devA&profileName=Ma%20
 - **Localisation** : libellés **fr / en**.
 - **Conversions** : via **pint** *(km↔mi, °C↔°F, km/h↔mph, m↔ft)*.
 - **Instance unique** : une seule instance de l’intégration est supportée.
+
+<a id="changelog"></a>
+## 🗒️ Changelog
+
+### `2025.09.0b1`
+- Intégration **Config Flow (UI)**.
+- **FR/EN** pour les libellés.
+- Option **Unités impériales**.
+- **Création automatique** des capteurs (incluant PIDs GPS hors lat/lon).
+- **Device tracker** basé sur `gpslat`/`gpslon`.
+- **Suppression fine** d’un véhicule depuis l’UI (sans retirer l’intégration).
+
+<a id="securite"></a>
+## 🔐 Sécurité & bonnes pratiques
+
+Si votre instance HA est accessible depuis Internet, ne laissez pas l’endpoint exposé **sans protection** :
+
+- **VPN** / **reverse proxy**
+- **Filtrage IP** (allow-list)
+- À défaut, activez le **filtre e-mail** côté intégration
+
+Ajustez la **fréquence d’upload** dans Torque pour éviter de surcharger la base  
+*(5–10 s suffisent si vous n’êtes pas en temps réel).*
+
+<a id="remerciements"></a>
+## 🤝 Remerciements
+
+- **Communauté Home Assistant** & utilisateurs de **Torque**.
+- **Contributeurs & testeurs** qui rendent ce projet plus robuste chaque jour. 💙
+
+<p align="center">
+  <sub>Envie de contribuer ? Ouvrez une <em>issue</em> / PR. Captures bienvenues (placez-les dans <code>docs/</code>) ✨</sub>
+</p>
+
