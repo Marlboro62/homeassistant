@@ -196,9 +196,15 @@ Merci aux projets développés par :
   <a href="#"><img alt="Language" src="https://img.shields.io/badge/FR%20%2F%20EN-localisation-00A86B.svg"></a>
 </p>
 
+## ☕ Support
+
+If you like this project, you can support me here:  
+[![Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/nothing_one)
+
 <p align="center">
  ☕ Support me on [Ko-fi](https://ko-fi.com/nothing_one)
 </p>
+
 
 
 
