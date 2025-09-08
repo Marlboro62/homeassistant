@@ -169,6 +169,10 @@ LABELS = {
         "turbo boost & vacuum gauge": "Boost & dépression turbo",
         "voltage (control module)": "Tension (module de contrôle)",
         "voltage (obd adapter)": "Tension (adaptateur OBD)",
+        "Vehicle Speed (GPS)": "Vitesse du véhicule (GPS)",        
+        
+        
+        
         "volumetric efficiency (calculated)": "Rendement volumétrique (calc.)",
     }
 }

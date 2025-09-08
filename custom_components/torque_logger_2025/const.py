@@ -434,7 +434,7 @@ TORQUE_CODES: Final = {
   "ff123b": {
     "shortName": "gps_bearing",
     "fullName": "GPS Bearing",
-    "unit": ""
+    "unit": "°"
   },
   "ff1226": {
     "shortName": "horsepower_at_the_wheels",
