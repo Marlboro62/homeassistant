@@ -19,7 +19,7 @@ CONF_IMPERIAL: Final = "imperial"
 # Langue (nouveau)
 CONF_LANGUAGE: Final = "language"
 DEFAULT_LANGUAGE: Final = "en"
-SUPPORTED_LANGS: Final = {"en": "English", "fr": "FranÃ§ais"}
+SUPPORTED_LANGS: Final = {"en": "English", "fr": "Français"}
 
 # Platforms
 DEVICE_TRACKER: Final = "device_tracker"
