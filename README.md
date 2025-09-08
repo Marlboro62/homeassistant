@@ -1,4 +1,6 @@
 # 🚗 [ BETA ] Torque Logger 2025 — Intégration Home Assistant
+[EN] 🚗 [ BETA ] Torque Logger 2025 — Home Assistant Integration  
+👉 [README in English](https://github.com/Marlboro62/homeassistant/blob/main/README.en.md)
 
 **Domaine :** `torque_logger_2025` · **Version :** `2025.09.0b1` · **IoT class :** `local_push`
 
