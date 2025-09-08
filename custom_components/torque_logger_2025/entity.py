@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Torque Entity class"""
+"""Torque Entity class for Torque Logger 2025."""
 
 from __future__ import annotations
 

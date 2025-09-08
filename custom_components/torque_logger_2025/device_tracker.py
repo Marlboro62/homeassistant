@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Device tracker for Torque Logger."""
+"""Device tracker for Torque Logger 2025."""
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Optional, Dict, Any

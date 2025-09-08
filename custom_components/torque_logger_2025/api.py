@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Torque Logger API Client/DataView."""
+"""Torque Logger 2025 API Client/DataView."""
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Optional

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Sensor platform for Torque Logger."""
+"""Sensor platform for Torque Logger 2025."""
 from __future__ import annotations
 
 import logging

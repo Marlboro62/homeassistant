@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Constants for Torque Logger"""
+"""Constants for Torque Logger 2025"""
 # Base component constants
 from typing import Final
 import json

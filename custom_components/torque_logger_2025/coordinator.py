@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Torque Logger Coordinator."""
+"""Torque Logger 2025 Coordinator."""
 from __future__ import annotations
 
 import logging

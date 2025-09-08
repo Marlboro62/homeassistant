@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""The Torque Logger integration with Home Assistant."""
+"""The Torque Logger 2025 integration with Home Assistant."""
 from __future__ import annotations
 
 import asyncio
