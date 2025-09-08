@@ -151,6 +151,7 @@ The integration will then **forget** this vehicle and **clean up** its internal 
 # Minimal test with session + profile + 1 known PID
 ```bash
 curl "http://HA:8123/api/torque_logger_2025?session=A1&id=devA&profileName=Ma%20Voiture&time=1694090000&userFullName0d=Vehicle%20speed&userShortName0d=speed&defaultUnit0d=km/h&k0d=250"
+curl "https://xxx.duckdns.org/api/torque_logger_2025?session=A1&id=devA&profileName=Ma%20Voiture&time=1694090000&userFullName0d=Vehicle%20speed&userShortName0d=speed&defaultUnit0d=km/h&k0d=250"
 ```
 
 <a id="technical-notes"></a>
