@@ -1,6 +1,6 @@
 # Liste des PIDs Torque — version GitHub
 
-> [!NOTE]
+> **Note**
 > Fichier auto-formaté en **tableaux à colonnes** avec sections repliables pour un rendu propre sur GitHub (GFM). Vous pouvez étendre/replier chaque groupe ci‑dessous.
 
 ## Sommaire
@@ -13,9 +13,6 @@
 - [FF52xx – Moyennes long terme](#ff52xx--moyennes-long-terme)
 
 ## Standard OBD‑II PIDs
-
-<details>
-<summary>Afficher / masquer</summary>
 
 
 | PID | Nom court | Nom complet | Unité |
@@ -106,12 +103,9 @@
 | `b2` | hybrid_ev_batt_soh | Hybrid/EV Battery State of Health | % |
 | `b4` | transmission_temp_method_2 | Transmission Temperature(Method 2) | °C |
 
-</details>
+
 
 ## FF10xx – GPS & télémétrie de base
-
-<details>
-<summary>Afficher / masquer</summary>
 
 
 | PID | Nom court | Nom complet | Unité |
@@ -122,12 +116,9 @@
 | `ff1006` | TORQUE_GPS_LAT | GPS Latitude | ° |
 | `ff1010` | TORQUE_GPS_ALTITUDE | GPS Altitude | m |
 
-</details>
+
 
 ## FF12xx – Performance, O2, trajets & divers
-
-<details>
-<summary>Afficher / masquer</summary>
 
 
 | PID | Nom court | Nom complet | Unité |
@@ -221,12 +212,9 @@
 | `ff129d` | dpf_b2_outlet_temp | DPF Bank 2 Outlet Temperature | °C |
 | `ff129e` | maf_sensor_b | Mass air flow sensor B | g/s |
 
-</details>
+
 
 ## FF12A* – Suralimentation/pression (B)
-
-<details>
-<summary>Afficher / masquer</summary>
 
 
 | PID | Nom court | Nom complet | Unité |
@@ -238,12 +226,9 @@
 | `ff12a6` | boost_pressure_sensor_b | Boost Pressure Sensor B | kPa |
 | `ff12ab` | exhaust_pressure_b2 | Exhaust Pressure Bank 2 | kPa |
 
-</details>
+
 
 ## FF12B* – DPF & Hybrid/EV
-
-<details>
-<summary>Afficher / masquer</summary>
 
 
 | PID | Nom court | Nom complet | Unité |
@@ -257,12 +242,9 @@
 | `ff12b5` | hybrid_ev_batt_power | Hybrid/EV System Battery Power | W |
 | `ff12b6` | positive_kinetic_energy_pke | Positive Kinetic Energy (PKE) | km/hr^2 |
 
-</details>
+
 
 ## FF52xx – Moyennes long terme
-
-<details>
-<summary>Afficher / masquer</summary>
 
 
 | PID | Nom court | Nom complet | Unité |
@@ -272,7 +254,7 @@
 | `ff5202` | kpl_long_term_avg | Kilometers Per Litre(Long Term Average) | kpl |
 | `ff5203` | l_per_100_long_term_avg | Litres Per 100 Kilometer(Long Term Average) | l/100km |
 
-</details>
+
 
 
 ---
@@ -280,7 +262,7 @@
 ### Astuces GitHub (GFM)
 
 
-> [!TIP]
+> **Astuce**
 > • Les tableaux ci‑dessus **créent des colonnes** lisibles sur GitHub.  
-> • Les sections utilisent `<details>` pour un « cadre » repliable.  
+> • Les sections utilisent `` pour un « cadre » repliable.  
 > • Vous pouvez ajouter des badges, du gras, des liens dans les cellules si besoin.  
