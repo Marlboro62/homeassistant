@@ -70,6 +70,7 @@ It’s simple, fast, and ready for your dashboards. 🔧📈
 
 <a id="configuration-ha"></a>
 ## ⚙️ Configuration in Home Assistant
+💡 Resources Installation Images: [Voir les images](https://github.com/Marlboro62/homeassistant/tree/main/docs/images/installation)
 
 1. **Settings → Integrations → Add integration → “Torque Logger 2025”**  
 2. Fill in:

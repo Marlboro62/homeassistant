@@ -72,7 +72,7 @@ C’est simple, rapide, et prêt pour vos tableaux de bord de passionné. 🔧�
 
 <a id="configuration-ha"></a>
 ## ⚙️ Configuration côté Home Assistant
-
+💡 Ressources Images Installation: [Voir les images](https://github.com/Marlboro62/homeassistant/tree/main/docs/images/installation)
 1. **Paramètres → Intégrations → Ajouter une intégration → “Torque Logger 2025”**  
 2. Renseignez :
    - **Email (facultatif)** : si défini, seuls les envois Torque portant **exactement** cet email seront traités.
@@ -102,7 +102,7 @@ Dans **Torque Pro** :
 
 <a id="tests-rapides"></a>
 ## 🧪 Tests rapides (sans Torque) avec PowerShell Windows
-💡 Ressources : [Voir les images](https://github.com/Marlboro62/homeassistant/tree/main/docs/images/curl)
+💡 Ressources BASH : [Voir les images](https://github.com/Marlboro62/homeassistant/tree/main/docs/images/curl)
 
 **Vitesse OBD (PID `0x0D`) :**
 ```bash
