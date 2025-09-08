@@ -185,10 +185,12 @@ Ajustez la **fréquence d’upload** dans Torque pour éviter de surcharger la b
 
 - **Communauté Home Assistant** & utilisateurs de **Torque**.
 - **Contributeurs & testeurs** qui rendent ce projet plus robuste chaque jour. 💙
+- Merci à Projet développé par [@junalmeida](https://github.com/junalmeida/homeassistant-torque) <a href="#"><img alt="Language" src="https://img.shields.io/badge/FR%20%2F%20EN-localisation-00A86B.svg"></a>
 
 <p align="center">
   <sub>Envie de contribuer ? Ouvrez une <em>issue</em> / PR. Captures bienvenues (placez-les dans <code>docs/</code>) ✨</sub>
 </p>
+
 
 
 
