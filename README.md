@@ -194,25 +194,9 @@ Merci aux projets développés par :
 
 ## ☕ Support
 
-If you like this project, you can support me here:  
+Si vous aimez ce projet, vous pouvez me soutenir ici :  
 [![Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/nothing_one)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<p align="center">
+  <a href="#"><img alt="Language" src="https://img.shields.io/badge/FR%20%2F%20EN-localisation-00A86B.svg"></a>
+</p>
