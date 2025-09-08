@@ -4,16 +4,15 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Optional, Dict, Any
 import logging
+import time
 
 from homeassistant.components.device_tracker import TrackerEntity
 from homeassistant.components.device_tracker.const import SourceType as TrackerSourceType
-
 from homeassistant.const import (
     ATTR_LATITUDE,
     ATTR_LONGITUDE,
     ATTR_GPS_ACCURACY,
 )
-
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import DeviceInfo
@@ -32,8 +31,11 @@ from .const import (
     TORQUE_GPS_LON,
 )
 
-# URL d'image personnalisée : on essaye d'abord de l'importer depuis const.py,
-# sinon on utilise un fallback direct.
+# Defaults
+DEFAULT_GPS_ACCURACY = 30   # mètres si Torque ne fournit pas ff1239
+STALE_AFTER_SECS = 180      # une position est “fraîche” 3 minutes max
+
+# URL d'image personnalisée : on essaye d'abord de l'importer depuis const.py
 try:
     from .const import ENTITY_PICTURE_URL  # type: ignore
 except Exception:
@@ -96,21 +98,27 @@ class TorqueDeviceTracker(TorqueEntity, TrackerEntity, RestoreEntity):
         val = self.coordinator.get_value(self._car_id, key)
         return self._get_float(val) if val is not None else None
 
+    def _last_seen(self) -> Optional[int]:
+        """Timestamp (epoch s) de la dernière trame reçue pour CE véhicule."""
+        val = self.coordinator.get_value(self._car_id, "time")
+        try:
+            return int(val)
+        except (TypeError, ValueError):
+            return None
+
     # --- Propriétés device_tracker ---------------------------------------
 
     @property
     def source_type(self) -> TrackerSourceType:
-        """Return the source type, eg gps or router, of the device."""
         return TrackerSourceType.GPS
 
     @property
     def battery_level(self) -> Optional[int]:
-        """Return the battery level of the device."""
         return None
 
     @property
     def latitude(self) -> Optional[float]:
-        """Return latitude value of the device (spécifique au véhicule)."""
+        """Latitude (spécifique au véhicule)."""
         val = self._get_for_car(TORQUE_GPS_LAT)
         if val is not None:
             return val
@@ -120,7 +128,7 @@ class TorqueDeviceTracker(TorqueEntity, TrackerEntity, RestoreEntity):
 
     @property
     def longitude(self) -> Optional[float]:
-        """Return longitude value of the device (spécifique au véhicule)."""
+        """Longitude (spécifique au véhicule)."""
         val = self._get_for_car(TORQUE_GPS_LON)
         if val is not None:
             return val
@@ -130,32 +138,37 @@ class TorqueDeviceTracker(TorqueEntity, TrackerEntity, RestoreEntity):
 
     @property
     def location_accuracy(self) -> int:
-        """Return the gps accuracy (meters) — NEVER None (HA >= 2025.x requirement)."""
-        # 1/ donnée live pour CE véhicule
+        """Toujours un entier >= 0 (HA 2025+)."""
+        # 1) Donnée live
         val = self._get_for_car(TORQUE_GPS_ACCURACY)
         if val is not None:
             try:
-                return int(float(val))
+                return max(0, int(float(val)))
             except (ValueError, TypeError):
                 pass
-        # 2/ restauration
+        # 2) Restauration
         if self._restored_state and self._restored_state.get(ATTR_GPS_ACCURACY) is not None:
             try:
-                return int(float(self._restored_state[ATTR_GPS_ACCURACY]))
+                return max(0, int(float(self._restored_state[ATTR_GPS_ACCURACY])))
             except (ValueError, TypeError):
                 pass
-        # 3/ défaut sûr pour éviter TypeError dans zone.async_active_zone
-        return 0
+        # 3) Défaut sûr
+        return DEFAULT_GPS_ACCURACY
 
     @property
     def available(self) -> bool:
-        """L'entité n'est disponible que si on a au moins une paire lat/lon."""
-        return self.latitude is not None and self.longitude is not None
+        """Disponible si on a lat/lon ET une trame récente."""
+        if self.latitude is None or self.longitude is None:
+            return False
+        last_seen = self._last_seen()
+        if not last_seen:
+            # pas d'horodatage → on tolère la position si présente
+            return True
+        return (int(time.time()) - last_seen) <= STALE_AFTER_SECS
 
     # --- Cycle de vie -----------------------------------------------------
 
     async def async_added_to_hass(self) -> None:
-        """Call when entity about to be added to Home Assistant."""
         await super().async_added_to_hass()
         state = await self.async_get_last_state()
         if state is None:
