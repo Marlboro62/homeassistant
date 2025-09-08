@@ -197,8 +197,9 @@ Merci aux projets développés par :
 </p>
 
 <p align="center">
-  <sub>[![Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/nothing_one) ✨</sub>
+ ☕ Support me on [Ko-fi](https://ko-fi.com/nothing_one)
 </p>
+
 
 
 
