@@ -183,11 +183,10 @@ Ajustez la **fréquence d’upload** dans Torque pour éviter de surcharger la b
 <a id="remerciements"></a>
 ## 🤝 Remerciements
 
-- **Communauté Home Assistant** & utilisateurs de **Torque**.
-- **Contributeurs & testeurs** qui rendent ce projet plus robuste chaque jour. 💙
-- Merci aux projets développés par [@junalmeida](https://github.com/junalmeida/homeassistant-torque) & [@DominikWrobel](https://github.com/DominikWrobel/homeassistant-torque)
+- **Communauté Home Assistant** & utilisateurs de **Torque**.  
+- **Contributeurs & testeurs** qui rendent ce projet plus robuste chaque jour. 💙  
 
-## Remerciements
+## 🌟 Remerciements spéciaux
 
 Merci aux projets développés par :  
 - [@junalmeida](https://github.com/junalmeida/homeassistant-torque)  
@@ -200,6 +199,7 @@ Merci aux projets développés par :
 <p align="center">
   <sub>Envie de contribuer ? Ouvrez une <em>issue</em> / PR. Captures bienvenues (placez-les dans <code>docs/</code>) ✨</sub>
 </p>
+
 
 
 
