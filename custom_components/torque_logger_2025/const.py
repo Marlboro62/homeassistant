@@ -1,4 +1,4 @@
-﻿"""Constants for Torque Logger"""
+"""Constants for Torque Logger"""
 # Base component constants
 from typing import Final
 import json

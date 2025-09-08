@@ -1,4 +1,4 @@
-﻿"""Torque Entity class"""
+"""Torque Entity class"""
 
 from typing import TYPE_CHECKING, Iterable, Tuple, Optional
 from homeassistant.helpers.update_coordinator import CoordinatorEntity

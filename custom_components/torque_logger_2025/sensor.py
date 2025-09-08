@@ -1,4 +1,4 @@
-﻿"""Sensor platform for Torque Logger."""
+"""Sensor platform for Torque Logger."""
 
 import logging
 import re

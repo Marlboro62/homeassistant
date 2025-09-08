@@ -1,4 +1,4 @@
-﻿"""Device tracker for Torque Logger."""
+"""Device tracker for Torque Logger."""
 
 from typing import TYPE_CHECKING, Optional, Dict, Any
 import logging

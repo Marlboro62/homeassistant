@@ -1,4 +1,4 @@
-﻿"""Torque Logger Coordinator."""
+"""Torque Logger Coordinator."""
 from __future__ import annotations
 
 import logging
