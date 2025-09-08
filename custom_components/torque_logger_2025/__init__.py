@@ -1,4 +1,4 @@
-﻿"""The Torque Logger integration with Home Assistant."""
+"""The Torque Logger integration with Home Assistant."""
 from __future__ import annotations
 
 import asyncio
@@ -30,32 +30,37 @@ async def async_setup(hass: HomeAssistant, config: dict) -> bool:
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up this integration via the UI."""
+    # Espace de stockage du domaine
     if DOMAIN not in hass.data:
         hass.data[DOMAIN] = {}
         _LOGGER.info(STARTUP_MESSAGE)
 
     domain_store: dict = hass.data[DOMAIN]
 
-    # Stockage par entrÃ©e
-    store: dict = {"data": {}}
-    domain_store[entry.entry_id] = store
-
-    # DonnÃ©es + options (fallback sur data)
+    # Données + options (fallback sur data)
     email = entry.data.get(CONF_EMAIL, "")
     imperial = entry.options.get(CONF_IMPERIAL, entry.data.get(CONF_IMPERIAL, False))
     language = entry.options.get(CONF_LANGUAGE, entry.data.get(CONF_LANGUAGE, DEFAULT_LANGUAGE))
 
-    # Vue HTTP (crÃ©Ã©e une fois, puis mise Ã  jour)
+    # Vue HTTP : la créer UNE fois, puis seulement MAJ de ses paramètres
     if "view" not in domain_store:
-        view = TorqueReceiveDataView(store["data"], email, imperial, language)
+        view = TorqueReceiveDataView(data={}, email=email, imperial=imperial, language=language)
         hass.http.register_view(view)
         domain_store["view"] = view
+        _LOGGER.debug("Torque view registered at %s", view.url)
     else:
         view: TorqueReceiveDataView = domain_store["view"]
-        view.data = store["data"]
         view.email = email or ""
         view.imperial = bool(imperial)
         view.lang = (language or DEFAULT_LANGUAGE).lower()
+        _LOGGER.debug("Torque view updated (email=%s, imperial=%s, lang=%s)", view.email, view.imperial, view.lang)
+
+    # Store par entrée
+    store: dict = {"data": {}}  # buffer session si tu veux l’exploiter côté vue
+    domain_store[entry.entry_id] = store
+
+    # Si tu veux que la vue partage ce buffer (facultatif, utile en multi-sessions Torque)
+    domain_store["view"].data = store["data"]
 
     # Coordinator
     coordinator = TorqueLoggerCoordinator(hass, domain_store["view"], entry)
@@ -83,17 +88,22 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         return True
 
     domain_store: dict = hass.data[DOMAIN]
-    # Supprime le store de cette entry
-    domain_store.pop(entry.entry_id, None)
 
-    # S'il ne reste plus aucune entry active, on "dÃ©branche" la vue
-    view = domain_store.get("view")
+    # Détache et purge le cache de cette entry
+    store = domain_store.pop(entry.entry_id, None)
+
+    # S'il ne reste plus aucune entry active, on garde la vue enregistrée
+    # mais on la met au neutre pour éviter toute réutilisation de vieux pointeurs.
     still_has_entries = any(k for k in domain_store.keys() if k != "view")
+    view: TorqueReceiveDataView | None = domain_store.get("view")
+
     if view and not still_has_entries:
         view.coordinator = None
-        # Optionnel : nettoyer totalement la clÃ© de domaine
-        domain_store.pop("view", None)
-        hass.data.pop(DOMAIN, None)
+        view.data = {}
+        _LOGGER.debug("Torque view kept registered but detached (no active entries).")
+
+    # Ne PAS faire: domain_store.pop('view', ...) ni hass.data.pop(DOMAIN, ...)
+    # afin d'éviter des ré-enregistrements de route pendant le runtime.
 
     return True
 
@@ -109,20 +119,20 @@ async def async_remove_config_entry_device(
     entry: ConfigEntry,
     device_entry: DeviceEntry,
 ) -> bool:
-    """Permet la suppression dâ€™un appareil (vÃ©hicule) depuis lâ€™UI.
+    """Autoriser la suppression d’un appareil (véhicule) depuis l’UI.
 
-    - Nettoie le cache du coordinator pour ce vÃ©hicule
-    - Retourne True pour que HA supprime lâ€™appareil + entitÃ©s associÃ©es
+    - Nettoie le cache du coordinator pour ce véhicule
+    - Retourne True pour que HA supprime l’appareil + entités associées
     """
     _LOGGER.debug("Removing device identifiers=%s", device_entry.identifiers)
 
     try:
         coordinator: TorqueLoggerCoordinator = hass.data[DOMAIN][entry.entry_id]["coordinator"]
     except KeyError:
-        # Rien Ã  nettoyer, mais on autorise la suppression dans lâ€™UI
+        # Rien à nettoyer, mais on autorise la suppression dans l’UI
         return True
 
-    # Identifiants posÃ©s dans DeviceInfo.identifiers => (DOMAIN, <vehicle_key>)
+    # Identifiants posés dans DeviceInfo.identifiers => (DOMAIN, <vehicle_key>)
     vehicle_keys = [id2 for (dom, id2) in device_entry.identifiers if dom == DOMAIN]
 
     for vkey in vehicle_keys:
