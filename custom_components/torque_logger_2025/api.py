@@ -6,10 +6,17 @@ from typing import TYPE_CHECKING, Optional
 import logging
 
 from aiohttp import web
-import pint
 from homeassistant.components.http import HomeAssistantView
 from homeassistant.util import slugify
 from homeassistant.config_entries import ConfigEntryState
+
+# --- pint est optionnel : on ne casse pas l'intégration s'il n'est pas installé
+try:
+    import pint  # type: ignore
+    ureg = pint.UnitRegistry()
+except Exception:  # pragma: no cover
+    pint = None
+    ureg = None
 
 from .const import TORQUE_CODES
 
@@ -19,8 +26,6 @@ if TYPE_CHECKING:
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 # --- Conversion d’unités ---
-ureg = pint.UnitRegistry()
-
 # Mappage d’unités pour l’affichage "joli" et les conversions impériales
 imperial_units = {"km": "mi", "°C": "°F", "km/h": "mph", "m": "ft"}
 prettyPint = {
@@ -33,7 +38,6 @@ prettyPint = {
     "meter": "m",
     "foot": "ft",
 }
-
 
 # --- Libellés localisés (extensible) ---
 LABELS = {
@@ -183,12 +187,17 @@ def _unpretty_units(unit: str) -> str:
 
 
 def _convert_units(value: float, u_in: str, u_out: str):
+    """Convertit via pint si dispo, sinon renvoie la valeur et l'unité d'entrée (pas de conversion)."""
+    if ureg is None:
+        # Pas de pint -> on ne convertit pas
+        return {"value": round(float(value), 2), "unit": u_in}
     q_in = ureg.Quantity(value, u_in)
     q_out = q_in.to(u_out)
     return {"value": round(q_out.magnitude, 2), "unit": str(q_out.units)}
 
 
 def _pretty_convert_units(value: float, u_in: str, u_out: str):
+    """Convertit et renvoie une unité 'jolie' ; si pint absent -> pas de conversion."""
     p_in = _unpretty_units(u_in)
     p_out = _unpretty_units(u_out)
     res = _convert_units(value, p_in, p_out)
@@ -244,7 +253,7 @@ class TorqueReceiveDataView(HomeAssistantView):
                 await self._async_publish_data(session)
 
             return web.Response(text="OK!")
-        except Exception as err:
+        except Exception as err:  # pragma: no cover
             # Log l’erreur mais renvoie OK pour ne pas casser l’envoi côté Torque
             _LOGGER.exception("Error handling Torque payload: %s", err)
             return web.Response(text="OK!")
@@ -386,6 +395,7 @@ class TorqueReceiveDataView(HomeAssistantView):
         return retdata
 
     async def _async_publish_data(self, session: str):
+        """Valide l’état d’installation, reconstruit un Name si absent, puis pousse vers le coordinator."""
         # --- GARDE ANTI-STALE : ignorer si l'entrée n'est pas chargée ---
         if not getattr(self, "coordinator", None):
             _LOGGER.warning("No coordinator bound to view; dropping payload")
@@ -423,6 +433,7 @@ class TorqueReceiveDataView(HomeAssistantView):
             if not profile.get("Name"):
                 fallback = current_id or profile.get("email") or session or "vehicle"
                 profile["Name"] = str(fallback)
+                _LOGGER.debug("No profile Name; using fallback=%r", profile["Name"])
 
         # Mémorise par voiture et notifie les entités
         self.coordinator.update_from_session(session_data)
