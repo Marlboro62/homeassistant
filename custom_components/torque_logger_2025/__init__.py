@@ -145,4 +145,3 @@ async def async_remove_config_entry_device(
                 _LOGGER.debug("forget_vehicle(%s) failed: %s", vkey, err)
 
     return True
-
