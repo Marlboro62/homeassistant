@@ -1,23 +1,24 @@
 # Liste des PIDs Torque — version GitHub
 
-> **Note**
-> Fichier auto-formaté en **tableaux à colonnes** avec sections repliables pour un rendu propre sur GitHub (GFM). Vous pouvez étendre/replier chaque groupe ci‑dessous.
+> **Note**  
+> Fichier auto‑formaté en **tableaux à colonnes** avec sections repliables pour un rendu propre sur GitHub (GFM).  
+> Vous pouvez étendre/replier chaque groupe ci‑dessous.
 
 ## Sommaire
-
 - [Standard OBD‑II PIDs](#standard-obdii-pids)
-- [FF10xx – GPS & télémétrie de base](#ff10xx--gps--tlmtrie-de-base)
+- [FF10xx – GPS & télémétrie de base](#ff10xx--gps--télémétrie-de-base)
 - [FF12xx – Performance, O2, trajets & divers](#ff12xx--performance-o2-trajets--divers)
 - [FF12A* – Suralimentation/pression (B)](#ff12a--suralimentationpression-b)
 - [FF12B* – DPF & Hybrid/EV](#ff12b--dpf--hybridev)
 - [FF52xx – Moyennes long terme](#ff52xx--moyennes-long-terme)
 
-## Standard OBD‑II PIDs
+---
 
+<details>
+<summary><strong>Standard OBD‑II PIDs</strong></summary>
 
 | PID | Nom court | Nom complet | Unité |
 | :-- | :-- | :-- | :--: |
-
 | `04` | engine_load | Engine Load | % |
 | `05` | coolant_temp | Engine Coolant Temperature | °C |
 | `06` | fuel_trim_b1_short | Fuel Trim Bank 1 Short Term | % |
@@ -103,27 +104,26 @@
 | `b2` | hybrid_ev_batt_soh | Hybrid/EV Battery State of Health | % |
 | `b4` | transmission_temp_method_2 | Transmission Temperature(Method 2) | °C |
 
+</details>
 
-
-## FF10xx – GPS & télémétrie de base
-
+<details>
+<summary><strong>FF10xx – GPS & télémétrie de base</strong></summary>
 
 | PID | Nom court | Nom complet | Unité |
 | :-- | :-- | :-- | :--: |
-
 | `ff1001` | gps_spd | Vehicle Speed (GPS) | km/h |
 | `ff1005` | TORQUE_GPS_LON | GPS Longitude | ° |
 | `ff1006` | TORQUE_GPS_LAT | GPS Latitude | ° |
 | `ff1010` | TORQUE_GPS_ALTITUDE | GPS Altitude | m |
 
+</details>
 
+<details>
 
-## FF12xx – Performance, O2, trajets & divers
-
+<summary><strong>FF12xx – Performance, O2, trajets & divers</strong></summary>
 
 | PID | Nom court | Nom complet | Unité |
 | :-- | :-- | :-- | :--: |
-
 | `ff1201` | mpg_instant | Miles Per Gallon(Instant) | mpg |
 | `ff1202` | turbo_boost_vacuum_gauge | Turbo Boost & Vacuum Gauge | psi |
 | `ff1203` | kpl_instant | Kilometers Per Litre(Instant) | kpl |
@@ -212,28 +212,27 @@
 | `ff129d` | dpf_b2_outlet_temp | DPF Bank 2 Outlet Temperature | °C |
 | `ff129e` | maf_sensor_b | Mass air flow sensor B | g/s |
 
+</details>
 
 
-## FF12A* – Suralimentation/pression (B)
-
+<details>
+<summary><strong>FF12A* – Suralimentation/pression (B)</strong></summary>
 
 | PID | Nom court | Nom complet | Unité |
 | :-- | :-- | :-- | :--: |
-
 | `ff12a1` | intake_manifold_abs_pressure_b | Intake Manifold Abs Pressure B | kPa |
 | `ff12a4` | boost_pressure_commanded_b | Boost Pressure Commanded B | kPa |
 | `ff12a5` | boost_pressure_sensor_a | Boost Pressure Sensor A | kPa |
 | `ff12a6` | boost_pressure_sensor_b | Boost Pressure Sensor B | kPa |
 | `ff12ab` | exhaust_pressure_b2 | Exhaust Pressure Bank 2 | kPa |
 
+</details>
 
-
-## FF12B* – DPF & Hybrid/EV
-
+<details>
+<summary><strong>FF12B* – DPF & Hybrid/EV</strong></summary>
 
 | PID | Nom court | Nom complet | Unité |
 | :-- | :-- | :-- | :--: |
-
 | `ff12b0` | dpf_b1_inlet_pressure | DPF Bank 1 Inlet Pressure | kPa |
 | `ff12b1` | dpf_b1_outlet_pressure | DPF Bank 1 Outlet Pressure | kPa |
 | `ff12b2` | dpf_b2_inlet_pressure | DPF Bank 2 Inlet Pressure | kPa |
@@ -242,27 +241,16 @@
 | `ff12b5` | hybrid_ev_batt_power | Hybrid/EV System Battery Power | W |
 | `ff12b6` | positive_kinetic_energy_pke | Positive Kinetic Energy (PKE) | km/hr^2 |
 
+</details>
 
-
-## FF52xx – Moyennes long terme
-
+<details>
+<summary><strong>FF52xx – Moyennes long terme</strong></summary>
 
 | PID | Nom court | Nom complet | Unité |
 | :-- | :-- | :-- | :--: |
-
 | `ff5201` | mpg_long_term_avg | Miles Per Gallon(Long Term Average) | mpg |
 | `ff5202` | kpl_long_term_avg | Kilometers Per Litre(Long Term Average) | kpl |
 | `ff5203` | l_per_100_long_term_avg | Litres Per 100 Kilometer(Long Term Average) | l/100km |
 
+</details>
 
-
-
----
-
-### Astuces GitHub (GFM)
-
-
-> **Astuce**
-> • Les tableaux ci‑dessus **créent des colonnes** lisibles sur GitHub.  
-> • Les sections utilisent `` pour un « cadre » repliable.  
-> • Vous pouvez ajouter des badges, du gras, des liens dans les cellules si besoin.  
