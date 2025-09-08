@@ -12,6 +12,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers import entity_registry as er, device_registry as dr
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.util import slugify
 
 from .const import (
     CITY_ICON,
@@ -39,10 +40,34 @@ async def async_setup_entry(
     coordinator: "TorqueLoggerCoordinator" = hass.data[DOMAIN][entry.entry_id]["coordinator"]
     coordinator.async_add_sensor = async_add_entities
 
-    # Restore previously loaded sensors
     ent_reg = er.async_get(hass)
     dev_reg = dr.async_get(hass)
 
+    # --- Migration: corriger les anciens entity_id avec double préfixe <car>_<car>_ ---
+    migrated = 0
+    for er_ent in list(ent_reg.entities.values()):
+        if er_ent.domain != SENSOR or not er_ent.entity_id.startswith("sensor."):
+            continue
+        device = dev_reg.async_get(er_ent.device_id) if er_ent.device_id else None
+        if not device:
+            continue
+        car_slug = slugify(device.name or device.model or "")
+        if not car_slug:
+            continue
+        dup_prefix = f"sensor.{car_slug}_{car_slug}_"
+        if er_ent.entity_id.startswith(dup_prefix):
+            new_entity_id = er_ent.entity_id.replace(f"{car_slug}_{car_slug}_", f"{car_slug}_", 1)
+            try:
+                ent_reg.async_update_entity(er_ent.entity_id, new_entity_id=new_entity_id)
+                migrated += 1
+                _LOGGER.info("Migrated entity_id %s -> %s", er_ent.entity_id, new_entity_id)
+            except Exception as err:
+                _LOGGER.debug("Migration failed for %s: %s", er_ent.entity_id, err)
+    if migrated:
+        _LOGGER.info("Torque Logger: %d entity_id migrated to remove double car prefix", migrated)
+    # -------------------------------------------------------------------------------
+
+    # Restauration des capteurs connus (basée sur unique_id stable)
     devices = [
         device
         for device in dev_reg.devices.values()
@@ -74,7 +99,7 @@ async def async_setup_entry(
             TorqueSensor(
                 coordinator,
                 entry,
-                er_ent.unique_id[len(prefix) :],
+                er_ent.unique_id[len(prefix):],
                 device_info,
             )
             for er_ent in ent_reg.entities.values()
@@ -160,7 +185,7 @@ class TorqueSensor(TorqueEntity, RestoreSensor):
 
         # Si pas de meta encore reçue pour cette voiture, restaure nom/unité
         if not self._attr_name:
-            # On NE préfixe PAS par le nom du véhicule ici (évite doublon)
+            # Pas de préfixe voiture ici (évite les doublons), HA le fera via has_entity_name
             self._attr_name = state.name or self.sensor_key
 
         if self._attr_native_unit_of_measurement is None:
