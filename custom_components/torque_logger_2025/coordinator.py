@@ -10,6 +10,7 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.entity import DeviceInfo
+from homeassistant.helpers import device_registry as dr
 from homeassistant.util import slugify
 
 from .sensor import TorqueSensor
@@ -20,6 +21,14 @@ if TYPE_CHECKING:
     from .api import TorqueReceiveDataView
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
+
+
+def _looks_like_hex_hash(text: str) -> bool:
+    """True si `text` est un hash hexadécimal de 32 caractères."""
+    if not isinstance(text, str):
+        return False
+    t = text.strip()
+    return len(t) == 32 and all(c in "0123456789abcdef" for c in t.lower())
 
 
 class TorqueLoggerCoordinator(DataUpdateCoordinator):
@@ -83,7 +92,14 @@ class TorqueLoggerCoordinator(DataUpdateCoordinator):
     async def add_entities(self, session_data: dict) -> None:
         """Créer les entités manquantes pour un véhicule donné."""
         profile = session_data["profile"]
-        car_name = profile["Name"]
+        raw_name = profile.get("Name") or "Vehicle"
+
+        # Alias lisible si le nom ressemble à un hash
+        display_name = raw_name
+        if _looks_like_hex_hash(raw_name):
+            base = (profile.get("id") or raw_name)[:6]
+            display_name = f"Véhicule {base}"
+
         car_key = self._vehicle_key(profile)
 
         # Mémorise/rafraîchit les dernières données
@@ -92,10 +108,19 @@ class TorqueLoggerCoordinator(DataUpdateCoordinator):
         device = DeviceInfo(
             identifiers={(DOMAIN, car_key)},  # <-- clé stable
             manufacturer="Torque",
-            model=car_name,
-            name=car_name,
+            model=display_name,
+            name=display_name,
             sw_version=profile.get("version"),
         )
+
+        # Si le device existe déjà et que le nom a changé -> on le renomme
+        try:
+            dev_reg = dr.async_get(self.hass)
+            dev = dev_reg.async_get_device(identifiers={(DOMAIN, car_key)})
+            if dev and (dev.name != display_name or dev.model != display_name):
+                dev_reg.async_update_device(dev.id, name=display_name, model=display_name)
+        except Exception:  # pas bloquant
+            _LOGGER.debug("Device rename skipped for %s", car_key)
 
         new_sensors: list[TorqueSensor] = []
         new_trackers: list[TorqueDeviceTracker] = []
@@ -132,7 +157,7 @@ class TorqueLoggerCoordinator(DataUpdateCoordinator):
                 "Sensor platform not ready yet; will try again on next payload "
                 "(%d sensors pending for %s).",
                 len(new_sensors),
-                car_name,
+                display_name,
             )
 
         if new_trackers and tracker_cb_ready:
@@ -143,7 +168,7 @@ class TorqueLoggerCoordinator(DataUpdateCoordinator):
                 "Device tracker platform not ready yet; will try again on next payload "
                 "(%d trackers pending for %s).",
                 len(new_trackers),
-                car_name,
+                display_name,
             )
 
         _LOGGER.debug("Tracked entities: %s", ", ".join(sorted(self.tracked)))
