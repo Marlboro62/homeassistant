@@ -163,7 +163,7 @@ curl "http://HA:8123/api/torque_logger_2025?session=A1&id=devA&profileName=Ma%20
 <a id="changelog"></a>
 ## 🗒️ Changelog
 
-### `2025.09.0b1`
+### `2025.09.3`
 - Intégration **Config Flow (UI)**.
 - **FR/EN** pour les libellés.
 - Option **Unités impériales**.
