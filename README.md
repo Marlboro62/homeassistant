@@ -2,7 +2,7 @@
 # 🚗 [EN] [ BETA ] Torque Logger 2025 — Home Assistant Integration  
 👉 [README in English](https://github.com/Marlboro62/homeassistant/blob/main/README.en.md)
 
-**Domaine :** `torque_logger_2025` · **Version :** `2025.09.0b1` · **IoT class :** `local_push`
+**Domaine :** `torque_logger_2025` · **Version :** `2025.09.3` · **IoT class :** `local_push`
 
 <p align="center">
   <img src="docs/icon.png" alt="Torque Logger 2025" width="128">
@@ -107,11 +107,15 @@ Dans **Torque Pro** :
 **Vitesse OBD (PID `0x0D`) :**
 ```bash
 curl "http://HA:8123/api/torque_logger_2025?session=A1&id=devA&eml=votre@mail.tld&profileName=Ma%20Voiture&v=1.0&time=1694090000&userFullName0d=Vehicle%20speed&userShortName0d=speed&defaultUnit0d=km/h&k0d=250"
+curl "https://xxx.duckdns.org/api/torque_logger_2025?session=A1&id=devA&eml=votre@mail.tld&profileName=Ma%20Voiture&v=1.0&time=1694090000&userFullName0d=Vehicle%20speed&userShortName0d=speed&defaultUnit0d=km/h&k0d=250"
+
 ```
 
 **Vitesse GPS (PID ff1001) ::**
 ```bash
 curl "http://HA:8123/api/torque_logger_2025?session=A1&id=devA&eml=votre@mail.tld&profileName=Ma%20Voiture&v=1.0&time=1694090100&userFullNameff1001=Vehicle%20speed%20(GPS)&userShortNameff1001=gps_spd&defaultUnitff1001=km/h&kff1001=142"
+curl "https://xxx.duckdns.org/api/torque_logger_2025?session=A1&id=devA&eml=votre@mail.tld&profileName=Ma%20Voiture&v=1.0&time=1694090100&userFullNameff1001=Vehicle%20speed%20(GPS)&userShortNameff1001=gps_spd&defaultUnitff1001=km/h&kff1001=142"
+
 ```
 
 <a id="capteurs-gps"></a>
