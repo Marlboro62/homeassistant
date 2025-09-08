@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Torque Logger API Client/DataView."""
 from __future__ import annotations
 
@@ -17,14 +18,14 @@ if TYPE_CHECKING:
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
-# --- Conversion dâ€™unitÃ©s ---
+# --- Conversion d’unités ---
 ureg = pint.UnitRegistry()
 
-# Mappage dâ€™unitÃ©s pour lâ€™affichage "joli" et les conversions impÃ©riales
-imperial_units = {"km": "mi", "Â°C": "Â°F", "km/h": "mph", "m": "ft"}
+# Mappage d’unités pour l’affichage "joli" et les conversions impériales
+imperial_units = {"km": "mi", "°C": "°F", "km/h": "mph", "m": "ft"}
 prettyPint = {
-    "degC": "Â°C",
-    "degF": "Â°F",
+    "degC": "°C",
+    "degF": "°F",
     "mile / hour": "mph",
     "kilometer / hour": "km/h",
     "mile": "mi",
@@ -33,7 +34,8 @@ prettyPint = {
     "foot": "ft",
 }
 
-# --- LibellÃ©s localisÃ©s (extensible) ---
+
+# --- Libellés localisés (extensible) ---
 LABELS = {
     "fr": {
         "engine load": "Charge moteur",
@@ -168,6 +170,7 @@ LABELS = {
     }
 }
 
+
 def _pretty_units(unit: str) -> str:
     return prettyPint.get(unit, unit)
 
@@ -192,8 +195,15 @@ def _pretty_convert_units(value: float, u_in: str, u_out: str):
     return {"value": res["value"], "unit": _pretty_units(res["unit"])}
 
 
+def _normalize_unit(unit: Optional[str]) -> str:
+    """Corrige les encodages foireux (Â°, etc.) et trim."""
+    if not unit:
+        return ""
+    return unit.replace("Â°", "°").replace("Â", "").strip()
+
+
 def _localize(lang: str, name: str) -> str:
-    """Retourne le libellÃ© localisÃ©, insensible Ã  la casse."""
+    """Retourne le libellé localisé, insensible à la casse."""
     loc = LABELS.get(lang)
     if not loc or not name:
         return name
@@ -205,7 +215,7 @@ class TorqueReceiveDataView(HomeAssistantView):
 
     url = "/api/torque_logger_2025"
     name = "api:torque_logger_2025"
-    requires_auth = False  # recommandÃ© pour envoi direct par Torque
+    requires_auth = False  # recommandé pour envoi direct par Torque
 
     coordinator: Optional["TorqueLoggerCoordinator"]
 
@@ -217,14 +227,14 @@ class TorqueReceiveDataView(HomeAssistantView):
         self.lang = (language or "en").lower()
         if self.lang not in ("en", "fr"):
             self.lang = "en"
-        self.coordinator = None  # injectÃ© par __init__.py
+        self.coordinator = None  # injecté par __init__.py
 
     async def get(self, request):
         """Handle Torque data GET request."""
         try:
             _LOGGER.debug("Torque payload: %s", dict(request.query))
 
-            # Permettre override temporaire via URL ?lang=fr
+            # Override temporaire via URL ?lang=fr
             lang_param = (request.query.get("lang") or request.query.get("language") or "").lower()
             if lang_param in ("en", "fr"):
                 self.lang = lang_param
@@ -235,12 +245,12 @@ class TorqueReceiveDataView(HomeAssistantView):
 
             return web.Response(text="OK!")
         except Exception as err:
-            # On log lâ€™erreur mais on renvoie OK pour ne pas casser lâ€™envoi cÃ´tÃ© Torque
+            # Log l’erreur mais renvoie OK pour ne pas casser l’envoi côté Torque
             _LOGGER.exception("Error handling Torque payload: %s", err)
             return web.Response(text="OK!")
 
     def parse_fields(self, qdata):  # noqa
-        """Parse les champs de la requÃªte Torque et remplit le buffer de session."""
+        """Parse les champs de la requête Torque et remplit le buffer de session."""
         session: str = qdata.get("session")
         if not session:
             raise web.HTTPBadRequest(text="Missing session")
@@ -303,7 +313,7 @@ class TorqueReceiveDataView(HomeAssistantView):
 
             self.data[session]["unknown"].append({"key": key, "value": value})
 
-        # Filtrage par email : si aucun email n'est dÃ©fini cÃ´tÃ© intÃ©gration -> accepter tout
+        # Filtrage par email : si aucun email n'est défini côté intégration -> accepter tout
         payload_email = self.data[session]["profile"].get("email", "").strip().lower()
         cfg_email = self.email.lower()
         if not cfg_email or payload_email == cfg_email:
@@ -317,7 +327,7 @@ class TorqueReceiveDataView(HomeAssistantView):
         return None
 
     def _get_field(self, session: str, key: str):
-        # VÃ©rifier que le PID est connu
+        # Vérifier que le PID est connu
         if TORQUE_CODES.get(key) is None:
             return None
 
@@ -327,13 +337,16 @@ class TorqueReceiveDataView(HomeAssistantView):
         unit: str = self.data[session]["defaultUnit"].get(key, defaults.get("unit", ""))
         value = self.data[session]["value"].get(key)
 
-        # Localisation du libellÃ© (insensible Ã  la casse)
+        # Localisation du libellé (insensible à la casse)
         if self.lang != "en":
             name = _localize(self.lang, name)
 
         short_name = slugify(str(short_name))
 
-        # Conversion en impÃ©rial si demandÃ©
+        # Normaliser / trimmer l’unité
+        unit = _normalize_unit(unit)
+
+        # Conversion en impérial si demandé
         if self.imperial and unit in imperial_units and value not in (None, ""):
             try:
                 conv = _pretty_convert_units(float(value), unit, imperial_units[unit])
@@ -362,7 +375,7 @@ class TorqueReceiveDataView(HomeAssistantView):
                 continue
 
             short = row_data["short_name"]
-            # Ã‰vite d'Ã©craser un autre PID ayant le mÃªme short_name
+            # Évite d'écraser un autre PID ayant le même short_name
             if short in retdata:
                 short = f"{short}-{key}"
 
@@ -373,7 +386,7 @@ class TorqueReceiveDataView(HomeAssistantView):
         return retdata
 
     async def _async_publish_data(self, session: str):
-        # --- GARDE ANTI-STALE : ignorer si l'entrÃ©e n'est pas chargÃ©e ---
+        # --- GARDE ANTI-STALE : ignorer si l'entrée n'est pas chargée ---
         if not getattr(self, "coordinator", None):
             _LOGGER.warning("No coordinator bound to view; dropping payload")
             return
@@ -389,22 +402,28 @@ class TorqueReceiveDataView(HomeAssistantView):
         # -----------------------------------------------------------------
 
         session_data = self._get_data(session)
+        profile = session_data["profile"]
 
-        # Ne publie pas tant qu'on n'a pas le nom du vÃ©hicule
-        if "Name" not in session_data["profile"]:
-            current_id = session_data["profile"].get("id")
-            other_sessions = [
-                self.data[key]
-                for key in self.data.keys()
-                if self.data[key]["profile"].get("id") == current_id
-                and "Name" in self.data[key]["profile"]
-            ]
-            if not other_sessions:
-                _LOGGER.warning("Missing profile name from torque data.")
-                return
-            session_data["profile"]["Name"] = other_sessions[0]["profile"]["Name"]
+        # Si le nom de véhicule manque, on le reconstruit (id/email/session) plutôt que de jeter la trame
+        if not profile.get("Name"):
+            current_id = profile.get("id")
 
-        # MÃ©morise par voiture et notifie les entitÃ©s
+            # Tente de récupérer un Name d’une autre session avec le même id
+            if current_id:
+                other_sessions = [
+                    self.data[key]
+                    for key in self.data.keys()
+                    if self.data[key]["profile"].get("id") == current_id
+                    and self.data[key]["profile"].get("Name")
+                ]
+                if other_sessions:
+                    profile["Name"] = other_sessions[0]["profile"]["Name"]
+
+            # Fallback si toujours rien
+            if not profile.get("Name"):
+                fallback = current_id or profile.get("email") or session or "vehicle"
+                profile["Name"] = str(fallback)
+
+        # Mémorise par voiture et notifie les entités
         self.coordinator.update_from_session(session_data)
         await self.coordinator.add_entities(session_data)
-

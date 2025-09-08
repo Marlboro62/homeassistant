@@ -1,4 +1,5 @@
 """Device tracker for Torque Logger."""
+from __future__ import annotations
 
 from typing import TYPE_CHECKING, Optional, Dict, Any
 import logging
@@ -28,11 +29,9 @@ from .const import (
     TORQUE_GPS_ACCURACY,
     TORQUE_GPS_LAT,
     TORQUE_GPS_LON,
-    # on ajoute l'altitude
-    TORQUE_GPS_ALTITUDE,
 )
 
-# URL d'image personnalisÃ©e : on essaye d'abord de l'importer depuis const.py,
+# URL d'image personnalisée : on essaye d'abord de l'importer depuis const.py,
 # sinon on utilise un fallback direct.
 try:
     from .const import ENTITY_PICTURE_URL  # type: ignore
@@ -52,7 +51,7 @@ async def async_setup_entry(
     coordinator: "TorqueLoggerCoordinator" = hass.data[DOMAIN][entry.entry_id]["coordinator"]
     coordinator.async_add_device_tracker = async_add_entities
 
-    # Restore previously loaded trackers
+    # Restaurer les trackers déjà connus
     dev_reg = dr.async_get(hass)
     devices = [
         device
@@ -80,67 +79,18 @@ class TorqueDeviceTracker(TorqueEntity, TrackerEntity, RestoreEntity):
         super().__init__(coordinator, config_entry, ENTITY_GPS, device)
         self._attr_name = self._car_name
         self._attr_icon = GPS_ICON
-        # Image personnalisÃ©e affichÃ©e comme vignette de l'entitÃ©
         self._attr_entity_picture = ENTITY_PICTURE_URL
         self._restored_state: Optional[Dict[str, Any]] = None
 
-    @property
-    def battery_level(self) -> Optional[int]:
-        """Return the battery level of the device."""
-        return None
+    # --- Helpers internes -------------------------------------------------
 
-    @property
-    def location_accuracy(self) -> Optional[int]:
-        """Return the gps accuracy (meters)."""
-        # Lire la donnÃ©e sur la voiture de l'entitÃ©
-        val = self.coordinator.get_value(self._car_id, TORQUE_GPS_ACCURACY)
-        if val is not None:
-            try:
-                return int(float(val))
-            except (ValueError, TypeError):
-                return None
+    def _get_float(self, value) -> Optional[float]:
+        try:
+            return float(value)
+        except (ValueError, TypeError):
+            return None
 
-        # fallback sur l'Ã©tat restaurÃ©
-        if self._restored_state and self._restored_state.get(ATTR_GPS_ACCURACY) is not None:
-            try:
-                return int(float(self._restored_state[ATTR_GPS_ACCURACY]))
-            except (ValueError, TypeError):
-                return None
-        return None
-
-    @property
-    def latitude(self) -> Optional[float]:
-        """Return latitude value of the device."""
-        val = self.coordinator.get_value(self._car_id, TORQUE_GPS_LAT)
-        if val is not None:
-            try:
-                return float(val)
-            except (ValueError, TypeError):
-                return None
-
-        if self._restored_state and self._restored_state.get(ATTR_LATITUDE) is not None:
-            try:
-                return float(self._restored_state[ATTR_LATITUDE])
-            except (ValueError, TypeError):
-                return None
-        return None
-
-    @property
-    def longitude(self) -> Optional[float]:
-        """Return longitude value of the device."""
-        val = self.coordinator.get_value(self._car_id, TORQUE_GPS_LON)
-        if val is not None:
-            try:
-                return float(val)
-            except (ValueError, TypeError):
-                return None
-
-        if self._restored_state and self._restored_state.get(ATTR_LONGITUDE) is not None:
-            try:
-                return float(self._restored_state[ATTR_LONGITUDE])
-            except (ValueError, TypeError):
-                return None
-        return None
+    # --- Propriétés device_tracker ---------------------------------------
 
     @property
     def source_type(self) -> TrackerSourceType:
@@ -148,21 +98,64 @@ class TorqueDeviceTracker(TorqueEntity, TrackerEntity, RestoreEntity):
         return TrackerSourceType.GPS
 
     @property
-    def extra_state_attributes(self) -> Dict[str, Any] | None:
-        """Expose altitude en attribut supplÃ©mentaire."""
-        attrs: Dict[str, Any] = {}
-        alt = self.coordinator.get_value(self._car_id, TORQUE_GPS_ALTITUDE)
-        if alt is not None:
+    def battery_level(self) -> Optional[int]:
+        """Return the battery level of the device."""
+        return None
+
+    @property
+    def latitude(self) -> Optional[float]:
+        """Return latitude value of the device."""
+        if (
+            self.coordinator.data is not None
+            and TORQUE_GPS_LAT in self.coordinator.data
+            and self.coordinator.data[TORQUE_GPS_LAT] is not None
+        ):
+            return self._get_float(self.coordinator.data[TORQUE_GPS_LAT])
+        if self._restored_state and self._restored_state.get(ATTR_LATITUDE) is not None:
+            return self._get_float(self._restored_state[ATTR_LATITUDE])
+        return None
+
+    @property
+    def longitude(self) -> Optional[float]:
+        """Return longitude value of the device."""
+        if (
+            self.coordinator.data is not None
+            and TORQUE_GPS_LON in self.coordinator.data
+            and self.coordinator.data[TORQUE_GPS_LON] is not None
+        ):
+            return self._get_float(self.coordinator.data[TORQUE_GPS_LON])
+        if self._restored_state and self._restored_state.get(ATTR_LONGITUDE) is not None:
+            return self._get_float(self._restored_state[ATTR_LONGITUDE])
+        return None
+
+    @property
+    def location_accuracy(self) -> int:
+        """Return the gps accuracy (meters) — NEVER None (HA >= 2025.x requirement)."""
+        # 1/ donnée live
+        if (
+            self.coordinator.data is not None
+            and TORQUE_GPS_ACCURACY in self.coordinator.data
+            and self.coordinator.data[TORQUE_GPS_ACCURACY] is not None
+        ):
             try:
-                attrs[ATTR_ALTITUDE] = float(alt)
+                return int(float(self.coordinator.data[TORQUE_GPS_ACCURACY]))
             except (ValueError, TypeError):
                 pass
-        elif self._restored_state and self._restored_state.get(ATTR_ALTITUDE) is not None:
+        # 2/ restauration
+        if self._restored_state and self._restored_state.get(ATTR_GPS_ACCURACY) is not None:
             try:
-                attrs[ATTR_ALTITUDE] = float(self._restored_state[ATTR_ALTITUDE])
+                return int(float(self._restored_state[ATTR_GPS_ACCURACY]))
             except (ValueError, TypeError):
                 pass
-        return attrs or None
+        # 3/ défaut sûr pour éviter TypeError dans zone.async_active_zone
+        return 0
+
+    @property
+    def available(self) -> bool:
+        """L'entité n'est disponible que si on a au moins une paire lat/lon."""
+        return self.latitude is not None and self.longitude is not None
+
+    # --- Cycle de vie -----------------------------------------------------
 
     async def async_added_to_hass(self) -> None:
         """Call when entity about to be added to Home Assistant."""
@@ -180,4 +173,3 @@ class TorqueDeviceTracker(TorqueEntity, TrackerEntity, RestoreEntity):
             ATTR_LONGITUDE: attr.get(ATTR_LONGITUDE),
             ATTR_GPS_ACCURACY: attr.get(ATTR_GPS_ACCURACY),
         }
-
