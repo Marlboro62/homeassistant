@@ -10,7 +10,7 @@ from homeassistant.components.http import HomeAssistantView
 from homeassistant.util import slugify
 from homeassistant.config_entries import ConfigEntryState
 
-# --- pint est optionnel : on ne casse pas l'intégration s'il n'est pas installé
+# --- pint optionnel : ne bloque pas l'intégration s'il est absent
 try:
     import pint  # type: ignore
     ureg = pint.UnitRegistry()
@@ -26,7 +26,6 @@ if TYPE_CHECKING:
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 # --- Conversion d’unités ---
-# Mappage d’unités pour l’affichage "joli" et les conversions impériales
 imperial_units = {"km": "mi", "°C": "°F", "km/h": "mph", "m": "ft"}
 prettyPint = {
     "degC": "°C",
@@ -187,9 +186,8 @@ def _unpretty_units(unit: str) -> str:
 
 
 def _convert_units(value: float, u_in: str, u_out: str):
-    """Convertit via pint si dispo, sinon renvoie la valeur et l'unité d'entrée (pas de conversion)."""
+    """Convertit via pint si dispo, sinon renvoie la valeur et l'unité d'entrée."""
     if ureg is None:
-        # Pas de pint -> on ne convertit pas
         return {"value": round(float(value), 2), "unit": u_in}
     q_in = ureg.Quantity(value, u_in)
     q_out = q_in.to(u_out)
@@ -205,10 +203,11 @@ def _pretty_convert_units(value: float, u_in: str, u_out: str):
 
 
 def _normalize_unit(unit: Optional[str]) -> str:
-    """Corrige les encodages foireux (°, etc.) et trim."""
+    """Corrige les encodages foireux (Â°, etc.) et trim."""
     if not unit:
         return ""
-    return unit.replace("°", "°").replace("", "").strip()
+    # retire les 'Â' parasites et normalise le symbole degré
+    return unit.replace("Â°", "°").replace("Â", "").strip()
 
 
 def _localize(lang: str, name: str) -> str:
@@ -254,7 +253,6 @@ class TorqueReceiveDataView(HomeAssistantView):
 
             return web.Response(text="OK!")
         except Exception as err:  # pragma: no cover
-            # Log l’erreur mais renvoie OK pour ne pas casser l’envoi côté Torque
             _LOGGER.exception("Error handling Torque payload: %s", err)
             return web.Response(text="OK!")
 
@@ -342,7 +340,7 @@ class TorqueReceiveDataView(HomeAssistantView):
 
         defaults = TORQUE_CODES[key]
         name: str = self.data[session]["fullName"].get(key, defaults.get("fullName", key))
-        short_name: str = self.data[session]["shortName"].get(key, defaults.get("shortName", key))
+        short_in = self.data[session]["shortName"].get(key, defaults.get("shortName", ""))
         unit: str = self.data[session]["defaultUnit"].get(key, defaults.get("unit", ""))
         value = self.data[session]["value"].get(key)
 
@@ -350,7 +348,11 @@ class TorqueReceiveDataView(HomeAssistantView):
         if self.lang != "en":
             name = _localize(self.lang, name)
 
-        short_name = slugify(str(short_name))
+        # Slug court et sûr
+        short_slug = slugify(str(short_in)) if short_in else ""
+        if not short_slug or short_slug in ("none", "-"):
+            # fallback sur le nom localisé ou, à défaut, PID
+            short_slug = slugify(str(name)) or f"pid_{key}"
 
         # Normaliser / trimmer l’unité
         unit = _normalize_unit(unit)
@@ -366,7 +368,7 @@ class TorqueReceiveDataView(HomeAssistantView):
 
         return {
             "name": name,
-            "short_name": short_name,
+            "short_name": short_slug,
             "unit": unit,
             "value": value,
         }
@@ -378,7 +380,7 @@ class TorqueReceiveDataView(HomeAssistantView):
         retdata = {"profile": self._get_profile(session), "time": self.data[session]["time"]}
         meta = {}
 
-        for key in self.data[session]["value"].keys():
+        for key in list(self.data[session]["value"].keys()):
             row_data = self._get_field(session, key)
             if row_data is None:
                 continue
@@ -396,7 +398,7 @@ class TorqueReceiveDataView(HomeAssistantView):
 
     async def _async_publish_data(self, session: str):
         """Valide l’état d’installation, reconstruit un Name si absent, puis pousse vers le coordinator."""
-        # --- GARDE ANTI-STALE : ignorer si l'entrée n'est pas chargée ---
+        # --- GARDE ANTI-STALE ---
         if not getattr(self, "coordinator", None):
             _LOGGER.warning("No coordinator bound to view; dropping payload")
             return
@@ -409,12 +411,12 @@ class TorqueReceiveDataView(HomeAssistantView):
         if entry.state != ConfigEntryState.LOADED:
             _LOGGER.warning("Config entry not loaded (state=%s); dropping payload", entry.state)
             return
-        # -----------------------------------------------------------------
+        # -------------------------
 
         session_data = self._get_data(session)
         profile = session_data["profile"]
 
-        # Si le nom de véhicule manque, on le reconstruit (id/email/session) plutôt que de jeter la trame
+        # Si le nom de véhicule manque, on reconstruit (id/email/session)
         if not profile.get("Name"):
             current_id = profile.get("id")
 
