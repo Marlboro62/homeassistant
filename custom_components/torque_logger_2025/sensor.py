@@ -1,14 +1,16 @@
 """Sensor platform for Torque Logger."""
+from __future__ import annotations
 
 import logging
 import re
 from typing import TYPE_CHECKING, List
+
 from homeassistant.components.sensor import RestoreSensor
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers import entity_registry as er, device_registry as dr
+from homeassistant.helpers.entity import DeviceInfo
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import (
     CITY_ICON,
@@ -25,7 +27,6 @@ from .entity import TorqueEntity
 
 if TYPE_CHECKING:
     from .coordinator import TorqueLoggerCoordinator
-
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -106,14 +107,26 @@ class TorqueSensor(TorqueEntity, RestoreSensor):
     ):
         super().__init__(coordinator, config_entry, sensor_key, device)
 
-        # Lis les meta de TA voiture (pas la derniÃ¨re trame globale)
-        meta = self.coordinator.get_meta(self._car_id)
-        if meta and self.sensor_key in meta:
-            self._attr_native_unit_of_measurement = meta[self.sensor_key].get("unit")
-            self._attr_name = meta[self.sensor_key].get("name")
-            self._set_icon()
+        # Métadonnées propres à la voiture
+        meta_all = self.coordinator.get_meta(self._car_id)
+        meta = meta_all.get(self.sensor_key, {}) if meta_all else {}
 
-        # Ne pas forcer entity_id : unique_id + nom suffisent
+        # Libellé et unité toujours sûrs
+        label = str(meta.get("name") or self.sensor_key or "value").strip()
+        unit = (meta.get("unit") or "").strip() or None
+
+        # Nom visible (toujours non vide)
+        self._attr_name = f"{self._car_name} {label}"
+        # Unité native
+        self._attr_native_unit_of_measurement = unit
+
+        # ID unique STABLE (ne dépend pas du libellé ni de la langue)
+        self._attr_unique_id = f"{DOMAIN}_{config_entry.entry_id}_{self._car_id}_{self.sensor_key}"
+
+        # Icône
+        self._set_icon()
+
+        # Valeur restaurée éventuelle
         self._restored_state = None
 
     @property
@@ -144,29 +157,49 @@ class TorqueSensor(TorqueEntity, RestoreSensor):
         _LOGGER.debug("Restore state of %s to %s", self.entity_id, native_state)
         self._restored_state = native_state.native_value
 
-        # Si pas de meta encore reÃ§ue pour cette voiture, restaure nom/unitÃ©
-        if self._attr_name is None:
-            self._attr_name = state.name
+        # Si pas de meta encore reçue pour cette voiture, restaure nom/unité
+        if not self._attr_name:
+            # Toujours préfixer par le nom du véhicule pour éviter les collisions
+            restored_name = state.name or self.sensor_key
+            if restored_name and not restored_name.startswith(self._car_name):
+                restored_name = f"{self._car_name} {restored_name}"
+            self._attr_name = restored_name
+
         if self._attr_native_unit_of_measurement is None:
             self._attr_native_unit_of_measurement = native_state.native_unit_of_measurement
 
         self._set_icon()
 
-    def _set_icon(self) -> None:
-        name = self._attr_name or ""
-        self._attr_icon = DEFAULT_ICON
-        if re.search(r"kilometers|miles", name, re.IGNORECASE):
-            self._attr_icon = DISTANCE_ICON
-        if re.search(r"litre|gallon", name, re.IGNORECASE):
-            self._attr_icon = FUEL_ICON
-        if re.search(r"distance", name, re.IGNORECASE):
-            self._attr_icon = DISTANCE_ICON
-        if re.search(r"time|idle", name, re.IGNORECASE):
-            self._attr_icon = TIME_ICON
-        if re.search(r"highway", name, re.IGNORECASE):
-            self._attr_icon = HIGHWAY_ICON
-        if re.search(r"city", name, re.IGNORECASE):
-            self._attr_icon = CITY_ICON
-        if re.search(r"speed", name, re.IGNORECASE):
-            self._attr_icon = SPEED_ICON
+    # ----------------- Helpers -----------------
 
+    def _set_icon(self) -> None:
+        """Choisit une icône cohérente selon le nom/sensor_key (FR/EN)."""
+        name = (self._attr_name or "").lower()
+        key = (self.sensor_key or "").lower()
+
+        self._attr_icon = DEFAULT_ICON
+
+        # Distance
+        if re.search(r"\b(distance|kilometers?|miles?)\b", name) or "distance" in key:
+            self._attr_icon = DISTANCE_ICON
+
+        # Carburant
+        if re.search(r"\b(fuel|carburant|litre|gallon)\b", name) or "fuel" in key:
+            self._attr_icon = FUEL_ICON
+
+        # Temps
+        if re.search(r"\b(time|temps|idle)\b", name):
+            self._attr_icon = TIME_ICON
+
+        # Ville/route
+        if re.search(r"\b(highway|autoroute)\b", name):
+            self._attr_icon = HIGHWAY_ICON
+        if re.search(r"\b(city|ville)\b", name):
+            self._attr_icon = CITY_ICON
+
+        # Vitesse (FR + EN + clé technique)
+        if (
+            re.search(r"\b(speed|vitesse)\b", name)
+            or key in ("speed", "gps_spd")
+        ):
+            self._attr_icon = SPEED_ICON
