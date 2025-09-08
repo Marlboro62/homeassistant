@@ -69,7 +69,7 @@ TORQUE_CODES: Final = {
   "05": {
     "shortName": "coolant_temp",
     "fullName": "Coolant Temperature",
-    "unit": "Â°C"
+    "unit": "°C"
   },
   "0c": {
     "shortName": "engine_rpm",
@@ -84,7 +84,7 @@ TORQUE_CODES: Final = {
   "0f": {
     "shortName": "intake_temp",
     "fullName": "Intake Air Temperature",
-    "unit": "Â°C"
+    "unit": "°C"
   },
   "11": {
     "shortName": "throttle_pos",
@@ -119,7 +119,7 @@ TORQUE_CODES: Final = {
   "ff1007": {
     "shortName": "gps_brng",
     "fullName": "GPS Bearing",
-    "unit": "Â°"
+    "unit": "°"
   },
   "ff123a": {
     "shortName": "gps_sat",
@@ -134,7 +134,7 @@ TORQUE_CODES: Final = {
   "ff1006": {
     "shortName": TORQUE_GPS_LAT,
     "fullName": "GPS Latitude",
-    "unit": "Â°"
+    "unit": "°"
   },
   "ff1239": {
     "shortName": TORQUE_GPS_ACCURACY,
@@ -154,7 +154,7 @@ TORQUE_CODES: Final = {
   "ff1005": {
     "shortName": TORQUE_GPS_LON,
     "fullName": "GPS Longitude",
-    "unit": "Â°"
+    "unit": "°"
   },
   "47": {
     "shortName": "absolute_throttle_position_b",

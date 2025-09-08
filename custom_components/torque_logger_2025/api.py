@@ -205,10 +205,10 @@ def _pretty_convert_units(value: float, u_in: str, u_out: str):
 
 
 def _normalize_unit(unit: Optional[str]) -> str:
-    """Corrige les encodages foireux (Â°, etc.) et trim."""
+    """Corrige les encodages foireux (°, etc.) et trim."""
     if not unit:
         return ""
-    return unit.replace("Â°", "°").replace("Â", "").strip()
+    return unit.replace("°", "°").replace("", "").strip()
 
 
 def _localize(lang: str, name: str) -> str:
