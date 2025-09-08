@@ -161,7 +161,7 @@ curl "http://HA:8123/api/torque_logger_2025?session=A1&id=devA&profileName=Ma%20
 - **Single instance:** only one integration instance is supported.
 
 <a id="changelog"></a>
-## 🗒️ Changelog
+## 🗒️ Changelog 
 
 ### `2025.09.3`
 - Added **Config Flow (UI)** integration.
