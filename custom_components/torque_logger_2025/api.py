@@ -26,17 +26,100 @@ if TYPE_CHECKING:
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 # --- Conversion d’unités ---
-imperial_units = {"km": "mi", "°C": "°F", "km/h": "mph", "m": "ft"}
+imperial_units = {
+    "km": "mile",
+    "m": "foot",
+    "km/h": "mile / hour",
+    "m/s": "mile / hour",
+    "°C": "degF",
+    "kPa": "psi",
+    "bar": "psi",
+    "l": "gallon",
+    "l/hr": "gallon / hour",
+    "l/min": "gallon / minute",
+    "cc/min": "cubic_inch / minute",
+    "g/s": "pound / second",
+    "Nm": "pound_force * foot",
+    "kW": "horsepower",
+    "g/km": "gram / mile",
+    "kpl": "mile / gallon",
+    "l/100km": "mile / gallon",
+}
 prettyPint = {
     "degC": "°C",
+    "degree_Celsius": "°C",
     "degF": "°F",
-    "mile / hour": "mph",
+    "degree_Fahrenheit": "°F",
     "kilometer / hour": "km/h",
-    "mile": "mi",
+    "kilometre / hour": "km/h",
+    "mile / hour": "mph",
+    "meter / second": "m/s",
+    "metre / second": "m/s",
     "kilometer": "km",
+    "kilometre": "km",
     "meter": "m",
+    "metre": "m",
+    "mile": "mi",
     "foot": "ft",
+    "newton * meter": "Nm",
+    "pound_force * foot": "ft·lb",
+    "kilopascal": "kPa",
+    "pascal": "Pa",
+    "bar": "bar",
+    "psi": "psi",
+    "liter": "L",
+    "litre": "L",
+    "liter / hour": "L/h",
+    "liter / minute": "L/min",
+    "gallon": "gal",
+    "gallon / hour": "gph",
+    "gallon / minute": "gpm",
+    "cubic_centimeter / minute": "cc/min",
+    "cubic_inch / minute": "in³/min",
+    "gram / second": "g/s",
+    "watt": "W",
+    "kilowatt": "kW",
+    "horsepower": "hp",
+    "mile / gallon": "mpg",
 }
+
+# Canonicalisation -> formes attendues par Pint
+_PINT_CANON = {
+    "km": "kilometer",
+    "m": "meter",
+    "km/h": "kilometer / hour",
+    "m/s": "meter / second",
+    "°C": "degC",
+    "°F": "degF",
+    "kPa": "kilopascal",
+    "Pa": "pascal",
+    "bar": "bar",
+    "psi": "psi",
+    "l": "liter",
+    "L": "liter",
+    "l/hr": "liter / hour",
+    "L/h": "liter / hour",
+    "l/min": "liter / minute",
+    "L/min": "liter / minute",
+    "cc/min": "cubic_centimeter / minute",
+    "g/s": "gram / second",
+    "Nm": "newton * meter",
+    "ft·lb": "pound_force * foot",
+    "kW": "kilowatt",
+    "W": "watt",
+    "g/km": "gram / kilometer",
+    "kpl": "kilometer / liter",
+    "l/100km": "liter / 100 kilometer",
+}
+def _to_pint(unit: str) -> str:
+    if not unit:
+        return ""
+    unit = unit.strip()
+    # si 'unit' est déjà une forme "jolie", on la mappe vers la clé Pint correspondante
+    for pint_unit, pretty_unit in prettyPint.items():
+        if pretty_unit == unit:
+            return pint_unit
+    return _PINT_CANON.get(unit, unit)
 
 # --- Libellés localisés (extensible) ---
 LABELS = {
@@ -249,16 +332,17 @@ def _convert_units(value: float, u_in: str, u_out: str):
     """Convertit via pint si dispo, sinon renvoie la valeur et l'unité d'entrée."""
     if ureg is None:
         return {"value": round(float(value), 2), "unit": u_in}
-    q_in = ureg.Quantity(value, u_in)
-    q_out = q_in.to(u_out)
-    return {"value": round(q_out.magnitude, 2), "unit": str(q_out.units)}
+    try:
+        q_in = ureg.Quantity(value, _to_pint(u_in))
+        q_out = q_in.to(_to_pint(u_out))
+        return {"value": round(q_out.magnitude, 2), "unit": str(q_out.units)}
+    except Exception:  # pragma: no cover
+        return {"value": round(float(value), 2), "unit": u_in}
 
 
 def _pretty_convert_units(value: float, u_in: str, u_out: str):
     """Convertit et renvoie une unité 'jolie' ; si pint absent -> pas de conversion."""
-    p_in = _unpretty_units(u_in)
-    p_out = _unpretty_units(u_out)
-    res = _convert_units(value, p_in, p_out)
+    res = _convert_units(value, u_in, u_out)
     return {"value": res["value"], "unit": _pretty_units(res["unit"])}
 
 
