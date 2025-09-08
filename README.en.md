@@ -101,6 +101,8 @@ In **Torque Pro**:
 <a id="quick-tests"></a>
 ## 🧪 Quick Tests (without Torque) with Windows PowerShell
 
+💡 Resources: [See images](https://github.com/Marlboro62/homeassistant/tree/main/docs/images/curl)
+
 **OBD Speed (PID `0x0D`):**
 ```bash
 curl "http://HA:8123/api/torque_logger_2025?session=A1&id=devA&eml=votre@mail.tld&profileName=Ma%20Voiture&v=1.0&time=1694090000&userFullName0d=Vehicle%20speed&userShortName0d=speed&defaultUnit0d=km/h&k0d=250"
