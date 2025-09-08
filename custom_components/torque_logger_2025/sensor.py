@@ -116,8 +116,8 @@ class TorqueSensor(TorqueEntity, RestoreSensor):
         label = str(meta.get("name") or self.sensor_key or "value").strip()
         unit = (meta.get("unit") or "").strip() or None
 
-        # Nom visible (toujours non vide)
-        self._attr_name = f"{self._car_name} {label}"
+        # Nom visible SANS préfix voiture (HA l'ajoute via has_entity_name=True)
+        self._attr_name = label
         # Unité native
         self._attr_native_unit_of_measurement = unit
 
@@ -160,11 +160,8 @@ class TorqueSensor(TorqueEntity, RestoreSensor):
 
         # Si pas de meta encore reçue pour cette voiture, restaure nom/unité
         if not self._attr_name:
-            # Toujours préfixer par le nom du véhicule pour éviter les collisions
-            restored_name = state.name or self.sensor_key
-            if restored_name and not restored_name.startswith(self._car_name):
-                restored_name = f"{self._car_name} {restored_name}"
-            self._attr_name = restored_name
+            # On NE préfixe PAS par le nom du véhicule ici (évite doublon)
+            self._attr_name = state.name or self.sensor_key
 
         if self._attr_native_unit_of_measurement is None:
             self._attr_native_unit_of_measurement = native_state.native_unit_of_measurement
@@ -199,8 +196,5 @@ class TorqueSensor(TorqueEntity, RestoreSensor):
             self._attr_icon = CITY_ICON
 
         # Vitesse (FR + EN + clé technique)
-        if (
-            re.search(r"\b(speed|vitesse)\b", name)
-            or key in ("speed", "gps_spd")
-        ):
+        if re.search(r"\b(speed|vitesse)\b", name) or key in ("speed", "gps_spd"):
             self._attr_icon = SPEED_ICON
