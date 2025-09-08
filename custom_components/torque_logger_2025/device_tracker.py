@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Device tracker for Torque Logger."""
 from __future__ import annotations
 
@@ -90,6 +91,11 @@ class TorqueDeviceTracker(TorqueEntity, TrackerEntity, RestoreEntity):
         except (ValueError, TypeError):
             return None
 
+    def _get_for_car(self, key) -> Optional[float]:
+        """Récupère et convertit en float la valeur du coordinator pour CE véhicule."""
+        val = self.coordinator.get_value(self._car_id, key)
+        return self._get_float(val) if val is not None else None
+
     # --- Propriétés device_tracker ---------------------------------------
 
     @property
@@ -104,26 +110,20 @@ class TorqueDeviceTracker(TorqueEntity, TrackerEntity, RestoreEntity):
 
     @property
     def latitude(self) -> Optional[float]:
-        """Return latitude value of the device."""
-        if (
-            self.coordinator.data is not None
-            and TORQUE_GPS_LAT in self.coordinator.data
-            and self.coordinator.data[TORQUE_GPS_LAT] is not None
-        ):
-            return self._get_float(self.coordinator.data[TORQUE_GPS_LAT])
+        """Return latitude value of the device (spécifique au véhicule)."""
+        val = self._get_for_car(TORQUE_GPS_LAT)
+        if val is not None:
+            return val
         if self._restored_state and self._restored_state.get(ATTR_LATITUDE) is not None:
             return self._get_float(self._restored_state[ATTR_LATITUDE])
         return None
 
     @property
     def longitude(self) -> Optional[float]:
-        """Return longitude value of the device."""
-        if (
-            self.coordinator.data is not None
-            and TORQUE_GPS_LON in self.coordinator.data
-            and self.coordinator.data[TORQUE_GPS_LON] is not None
-        ):
-            return self._get_float(self.coordinator.data[TORQUE_GPS_LON])
+        """Return longitude value of the device (spécifique au véhicule)."""
+        val = self._get_for_car(TORQUE_GPS_LON)
+        if val is not None:
+            return val
         if self._restored_state and self._restored_state.get(ATTR_LONGITUDE) is not None:
             return self._get_float(self._restored_state[ATTR_LONGITUDE])
         return None
@@ -131,14 +131,11 @@ class TorqueDeviceTracker(TorqueEntity, TrackerEntity, RestoreEntity):
     @property
     def location_accuracy(self) -> int:
         """Return the gps accuracy (meters) — NEVER None (HA >= 2025.x requirement)."""
-        # 1/ donnée live
-        if (
-            self.coordinator.data is not None
-            and TORQUE_GPS_ACCURACY in self.coordinator.data
-            and self.coordinator.data[TORQUE_GPS_ACCURACY] is not None
-        ):
+        # 1/ donnée live pour CE véhicule
+        val = self._get_for_car(TORQUE_GPS_ACCURACY)
+        if val is not None:
             try:
-                return int(float(self.coordinator.data[TORQUE_GPS_ACCURACY]))
+                return int(float(val))
             except (ValueError, TypeError):
                 pass
         # 2/ restauration

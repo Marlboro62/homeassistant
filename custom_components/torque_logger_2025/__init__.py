@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """The Torque Logger integration with Home Assistant."""
 from __future__ import annotations
 

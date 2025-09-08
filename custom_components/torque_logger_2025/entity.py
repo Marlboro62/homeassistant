@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Torque Entity class"""
 
 from typing import TYPE_CHECKING, Iterable, Tuple, Optional

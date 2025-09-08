@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Constants for Torque Logger"""
 # Base component constants
 from typing import Final
@@ -11,7 +12,7 @@ with open(_manifest, encoding="utf-8") as file:
     VERSION: Final = json.load(file)["version"]
 ATTRIBUTION: Final = "Torque Pro 2025"
 ISSUE_URL: Final = "https://github.com/junalmeida/homeassistant-torque/issues"
-ENTITY_PICTURE_URL: Final = "/api/torque_logger_2025/static/logo.jpg"
+ENTITY_PICTURE_URL: Final = "/local/torque_logo.jpg"
 
 # CONF
 CONF_EMAIL: Final = "email"
@@ -711,5 +712,3 @@ TORQUE_CODES: Final = {
     "unit": ""
   }
 }
-
-

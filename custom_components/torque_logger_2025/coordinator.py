@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Torque Logger Coordinator."""
 from __future__ import annotations
 

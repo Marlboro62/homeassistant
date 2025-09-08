@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Sensor platform for Torque Logger."""
 from __future__ import annotations
 

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Adds config flow for Torque Logger 2025."""
 from __future__ import annotations
 
