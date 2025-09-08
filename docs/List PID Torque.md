@@ -1,8 +1,5 @@
-# Liste des PIDs Torque — version GitHub
+# Liste des PIDs Torque —
 
-> **Note**  
-> Fichier auto‑formaté en **tableaux à colonnes** avec sections repliables pour un rendu propre sur GitHub (GFM).  
-> Vous pouvez étendre/replier chaque groupe ci‑dessous.
 
 ## Sommaire
 - [Standard OBD‑II PIDs](#standard-obdii-pids)
