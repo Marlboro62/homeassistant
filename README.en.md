@@ -1,12 +1,12 @@
 ﻿# 🚗 [ BETA ] Torque Logger 2025 — Home Assistant Integration
 
-**Domain:** `torque_logger_2025` · **Version:** `2025.09.4` · **IoT class:** `local_push`
+**Domain:** `torque_logger_2025` · **Version:** `2025.09.5` · **IoT class:** `local_push`
 
 <p align="center">
   <img src="docs/icon.png" alt="Torque Logger 2025" width="128">
 </p>
 <p align="center">
-  <a href="https://img.shields.io/badge/version-2025.09.4-blue.svg"><img alt="Version" src="https://img.shields.io/badge/version-2025.09.4-blue.svg"></a>
+  <a href="https://img.shields.io/badge/version-2025.09.5-blue.svg"><img alt="Version" src="https://img.shields.io/badge/version-2025.09.5-blue.svg"></a>
   <a href="#"><img alt="Home Assistant" src="https://img.shields.io/badge/Home%20Assistant-Custom%20Component-41BDF5.svg"></a>
   <a href="#"><img alt="IoT Class" src="https://img.shields.io/badge/IoT%20class-local__push-8A2BE2.svg"></a>
   <a href="#"><img alt="Language" src="https://img.shields.io/badge/FR%20%2F%20EN-localisation-00A86B.svg"></a>
@@ -166,12 +166,12 @@ curl "https://xxx.duckdns.org/api/torque_logger_2025?session=A1&id=devA&profileN
 <a id="changelog"></a>
 ## 🗒️ Changelog 
 
-### `2025.09.3`
+### `2025.09.5`
 - Added **Config Flow (UI)** integration.
 - **FR/EN** label support.
 - Option for **Imperial units**.
 - **Auto-creation** of sensors (including GPS PIDs other than lat/lon).
-- **Device tracker** based on `gpslat`/`gpslon`.
+- **Device tracker** based on `gpslat`/`gpslon`. [BUG being resolved]
 - **Granular vehicle removal** from UI (without removing the integration).
 
 <a id="security"></a>
