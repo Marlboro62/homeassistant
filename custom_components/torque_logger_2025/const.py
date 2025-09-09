@@ -489,17 +489,17 @@ TORQUE_CODES: Final = {
     "unit": "km/h"
   },
   "ff1005": {
-    "shortName": "TORQUE_GPS_LON",
+    "shortName": "gpslon",
     "fullName": "GPS Longitude",
     "unit": "°"
   },
   "ff1006": {
-    "shortName": "TORQUE_GPS_LAT",
+    "shortName": "gpslat",
     "fullName": "GPS Latitude",
     "unit": "°"
   },
   "ff1010": {
-    "shortName": "TORQUE_GPS_ALTITUDE",
+    "shortName": "gps_height",
     "fullName": "GPS Altitude",
     "unit": "m"
   },
@@ -649,7 +649,7 @@ TORQUE_CODES: Final = {
     "unit": "V"
   },
   "ff1239": {
-    "shortName": "TORQUE_GPS_ACCURACY",
+    "shortName": "gps_acc",
     "fullName": "GPS Accuracy",
     "unit": "m"
   },
