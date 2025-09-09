@@ -6,17 +6,10 @@ from typing import TYPE_CHECKING, Optional
 import logging
 
 from aiohttp import web
+import pint
 from homeassistant.components.http import HomeAssistantView
 from homeassistant.util import slugify
 from homeassistant.config_entries import ConfigEntryState
-
-# --- pint optionnel : ne bloque pas l'intégration s'il est absent
-try:
-    import pint  # type: ignore
-    ureg = pint.UnitRegistry()
-except Exception:  # pragma: no cover
-    pint = None
-    ureg = None
 
 from .const import TORQUE_CODES
 
@@ -26,296 +19,158 @@ if TYPE_CHECKING:
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 # --- Conversion d’unités ---
-imperial_units = {
-    "km": "mile",
-    "m": "foot",
-    "km/h": "mile / hour",
-    "m/s": "mile / hour",
-    "°C": "degF",
-    "kPa": "psi",
-    "bar": "psi",
-    "l": "gallon",
-    "l/hr": "gallon / hour",
-    "l/min": "gallon / minute",
-    "cc/min": "cubic_inch / minute",
-    "g/s": "pound / second",
-    "Nm": "pound_force * foot",
-    "kW": "horsepower",
-    "g/km": "gram / mile",
-    "kpl": "mile / gallon",
-    "l/100km": "mile / gallon",
-}
+ureg = pint.UnitRegistry()
+
+# Mappage d’unités pour l’affichage "joli" et les conversions impériales
+
+imperial_units = {"km": "mi", "°C": "°F", "km/h": "mph", "m": "ft"}
+
 prettyPint = {
     "degC": "°C",
-    "degree_Celsius": "°C",
     "degF": "°F",
-    "degree_Fahrenheit": "°F",
-    "kilometer / hour": "km/h",
-    "kilometre / hour": "km/h",
     "mile / hour": "mph",
-    "meter / second": "m/s",
-    "metre / second": "m/s",
-    "kilometer": "km",
-    "kilometre": "km",
-    "meter": "m",
-    "metre": "m",
+    "kilometer / hour": "km/h",
     "mile": "mi",
+    "kilometer": "km",
+    "meter": "m",
     "foot": "ft",
-    "newton * meter": "Nm",
-    "pound_force * foot": "ft·lb",
-    "kilopascal": "kPa",
-    "pascal": "Pa",
-    "bar": "bar",
-    "psi": "psi",
-    "liter": "L",
-    "litre": "L",
-    "liter / hour": "L/h",
-    "liter / minute": "L/min",
-    "gallon": "gal",
-    "gallon / hour": "gph",
-    "gallon / minute": "gpm",
-    "cubic_centimeter / minute": "cc/min",
-    "cubic_inch / minute": "in³/min",
-    "gram / second": "g/s",
-    "watt": "W",
-    "kilowatt": "kW",
-    "horsepower": "hp",
-    "mile / gallon": "mpg",
 }
-
-# Canonicalisation -> formes attendues par Pint
-_PINT_CANON = {
-    "km": "kilometer",
-    "m": "meter",
-    "km/h": "kilometer / hour",
-    "m/s": "meter / second",
-    "°C": "degC",
-    "°F": "degF",
-    "kPa": "kilopascal",
-    "Pa": "pascal",
-    "bar": "bar",
-    "psi": "psi",
-    "l": "liter",
-    "L": "liter",
-    "l/hr": "liter / hour",
-    "L/h": "liter / hour",
-    "l/min": "liter / minute",
-    "L/min": "liter / minute",
-    "cc/min": "cubic_centimeter / minute",
-    "g/s": "gram / second",
-    "Nm": "newton * meter",
-    "ft·lb": "pound_force * foot",
-    "kW": "kilowatt",
-    "W": "watt",
-    "g/km": "gram / kilometer",
-    "kpl": "kilometer / liter",
-    "l/100km": "liter / 100 kilometer",
-}
-def _to_pint(unit: str) -> str:
-    if not unit:
-        return ""
-    unit = unit.strip()
-    # si 'unit' est déjà une forme "jolie", on la mappe vers la clé Pint correspondante
-    for pint_unit, pretty_unit in prettyPint.items():
-        if pretty_unit == unit:
-            return pint_unit
-    return _PINT_CANON.get(unit, unit)
 
 # --- Libellés localisés (extensible) ---
 LABELS = {
     "fr": {
         "engine load": "Charge moteur",
-        "engine coolant temperature": "T LdR",
-        "fuel trim bank 1 short term": "Fuel Trim Bank 1 Short Term",
-        "fuel trim bank 1 long term": "Fuel Trim Bank 1 Long Term",
-        "fuel trim bank 2 short term": "Fuel Trim Bank 2 Short Term",
-        "fuel trim bank 2 long term": "Fuel Trim Bank 2 Long Term",
-        "fuel pressure": "P carburant",
-        "intake manifold pressure": "P adm.",
-        "engine rpm": "Régime",
-        "speed (obd)": "Vit. OBD",
-        "timing advance": "Avance allumage",
-        "intake air temperature": "T air adm.",
-        "mass air flow rate": "Débit air (MAF)",
-        "throttle position (manifold)": "Papillon (adm.)",
-        "fuel trim {o2l:1}": "Fuel trim {O2L:1}",
-        "fuel trim {o2l:2}": "Fuel trim {O2L:2}",
-        "fuel trim {o2l:3}": "Fuel trim {O2L:3}",
-        "fuel trim {o2l:4}": "Fuel trim {O2L:4}",
-        "fuel trim {o2l:5}": "Fuel trim {O2L:5}",
-        "fuel trim {o2l:6}": "Fuel trim {O2L:6}",
-        "fuel trim {o2l:7}": "Fuel trim {O2L:7}",
-        "fuel trim {o2l:8}": "Fuel trim {O2L:8}",
-        "run time since engine start": "Temps depuis dém.",
-        "distance travelled with mil/cel lit": "Dist. MIL allumée",
-        "fuel rail pressure (relative to manifold vacuum)": "P rampe (rel. vide)",
-        "fuel rail pressure": "P rampe",
-        "o2 {o2l:1} wide range voltage": "O2 L1 U O2 LB",
-        "o2 {o2l:2} wide range voltage": "O2 L2 U O2 LB",
-        "o2 {o2l:3} wide range voltage": "O2 L3 U O2 LB",
-        "o2 {o2l:4} wide range voltage": "O2 L4 U O2 LB",
-        "o2 {o2l:5} wide range voltage": "O2 L5 U O2 LB",
-        "o2 {o2l:6} wide range voltage": "O2 L6 U O2 LB",
-        "o2 {o2l:7} wide range voltage": "O2 L7 U O2 LB",
-        "o2 {o2l:8} wide range voltage": "O2 L8 U O2 LB",
-        "egr commanded": "EGR cmd.",
-        "egr error": "Erreur EGR",
-        "fuel level (from engine ecu)": "Fuel Level (From Engine ECU)",
-        "distance travelled since codes cleared": "Dist. depuis effacement",
-        "evap system vapour pressure": "Evap System Vapour Pressure",
-        "barometric pressure (from vehicle)": "Baro (véh.)",
-        "o2 {o2l:1} wide range current": "O2 L1 I O2 LB",
-        "o2 {o2l:2} wide range current": "O2 L2 I O2 LB",
-        "o2 {o2l:3} wide range current": "O2 L3 I O2 LB",
-        "o2 {o2l:4} wide range current": "O2 L4 I O2 LB",
-        "o2 {o2l:5} wide range current": "O2 L5 I O2 LB",
-        "o2 {o2l:6} wide range current": "O2 L6 I O2 LB",
-        "o2 {o2l:7} wide range current": "O2 L7 I O2 LB",
-        "o2 {o2l:8} wide range current": "O2 L8 I O2 LB",
-        "catalyst temperature (bank 1,sensor 1)": "T cata B1 S1",
-        "catalyst temperature (bank 2,sensor 1)": "T cata B2 S1",
-        "catalyst temperature (bank 1,sensor 2)": "T cata B1 S2",
-        "catalyst temperature (bank 2,sensor 2)": "T cata B2 S2",
-        "voltage (control module)": "U module",
-        "engine load(absolute)": "Charge (abs.)",
-        "commanded equivalence ratio (lambda)": "Commanded Lambda (lambda)",
-        "relative throttle position": "Papillon (rel.)",
-        "ambient air temp": "T air amb.",
-        "absolute throttle position b": "Papillon abs. B",
-        "accelerator pedalposition d": "Pédale D",
-        "accelerator pedalposition e": "Pédale E",
-        "accelerator pedalposition f": "Pédale F",
-        "ethanol fuel %": "% éthanol",
-        "relative accelerator pedal position": "Pédale (rel.)",
-        "hybrid battery charge (%)": "SOC batt. HV",
-        "engine oil temperature": "T huile mot.",
-        "fuel rate (direct from ecu)": "Débit carb. (ECU)",
-        "drivers demand engine % torque": "% couple demandé",
-        "actual engine % torque": "% couple effectif",
-        "engine reference torque": "Couple réf. moteur",
-        "mass air flow sensor a": "Débit air A",
-        "boost pressure commanded a": "Boost cmd. A",
-        "exhaust pressure bank 1": "P éch. B1",
-        "charge air cooler temperature (cact)": "T CACT",
-        "exhaust gas temp bank 1 sensor 1": "T éch. B1 S1",
-        "exhaust gas temp bank 2 sensor 1": "T éch. B2 S1",
-        "dpf bank 1 delta pressure": "ΔP FAP B1",
-        "dpf bank 2 delta pressure": "ΔP FAP B2",
-        "dpf bank 1 inlet temperature": "T FAP B1 entrée",
-        "nox pre scr": "NOx pré SCR",
-        "intake manifold abs pressure a": "P abs. adm. A",
-        "hybrid/ev system battery voltage": "U batt. HV",
-        "odometer(from ecu)": "Odomètre ECU",
-        "hybrid/ev battery state of health": "SOH batt. HV",
-        "transmission temperature(method 2)": "Transmission Temperature(Method 2)",
-        "vehicle speed (gps)": "Vit. GPS",
-        "gps longitude": "Lon. GPS",
-        "gps latitude": "Lat. GPS",
-        "gps altitude": "Alt. GPS",
-        "miles per gallon(instant)": "Inst. mpg",
-        "turbo boost & vacuum gauge": "Boost & dépr.",
-        "kilometers per litre(instant)": "Inst. km/L",
-        "trip distance": "Dist. trajet",
-        "trip average mpg": "Moy. traj. mpg",
-        "trip average kpl": "Moy. traj. km/L",
-        "litres per 100 kilometer(instant)": "Inst. L/100",
-        "trip average litres/100 km": "Moy. traj. L/100",
-        "trip distance (stored in vehicle profile)": "Trip distance (stored in vehicle profile)",
-        "o2 {o2l:1} voltage": "O2 L1 Voltage",
-        "o2 {o2l:2} voltage": "O2 L2 Voltage",
-        "o2 {o2l:3} voltage": "O2 L3 Voltage",
-        "o2 {o2l:4} voltage": "O2 L4 Voltage",
-        "o2 {o2l:5} voltage": "O2 L5 Voltage",
-        "o2 {o2l:6} voltage": "O2 L6 Voltage",
-        "o2 {o2l:7} voltage": "O2 L7 Voltage",
-        "o2 {o2l:8} voltage": "O2 L8 Voltage",
-        "acceleration sensor(x axis)": "Acceleration Sensor(X axis)",
-        "acceleration sensor(y axis)": "Acceleration Sensor(Y axis)",
-        "acceleration sensor(z axis)": "Acceleration Sensor(Z axis)",
-        "acceleration sensor(total)": "Acceleration Sensor(Total)",
-        "torque": "Couple",
-        "horsepower (at the wheels)": "HP (roues)",
-        "0-60mph time": "0→60 mph",
-        "0-100kph time": "0→100 km/h",
-        "1/4 mile time": "1/4 mile (t)",
-        "1/8 mile time": "1/8 mile (t)",
-        "gps vs obd speed difference": "Écart vit. GPS/OBD",
-        "voltage (obd adapter)": "U OBD",
-        "gps accuracy": "Préc. GPS",
-        "gps satellites": "Sat. GPS",
+        "coolant temperature": "Température liquide refroidissement",
+        "engine rpm": "Régime moteur",
+        "vehicle speed": "Vitesse du véhicule",
+        "intake air temperature": "Température air d’admission",
+        "throttle position": "Position d’accélérateur",
+        "distance since engine start": "Distance depuis démarrage moteur",
+        "distance with mil on": "Distance avec MIL allumée",
+        "fuel level": "Niveau de carburant",
+        "distance with mil off": "Distance avec MIL éteinte",
+        "vehicle speed (gps)": "Vitesse du véhicule (GPS)",
         "gps bearing": "Cap GPS",
-        "o2 {o2l:1} wide range equivalence ratio": "O2 L1 Lambda LB",
-        "o2 {o2l:2} wide range equivalence ratio": "O2 L2 Lambda LB",
-        "o2 {o2l:3} wide range equivalence ratio": "O2 L3 Lambda LB",
-        "o2 {o2l:4} wide range equivalence ratio": "O2 L4 Lambda LB",
-        "o2 {o2l:5} wide range equivalence ratio": "O2 L5 Lambda LB",
-        "o2 {o2l:6} wide range equivalence ratio": "O2 L6 Lambda LB",
-        "o2 {o2l:7} wide range equivalence ratio": "O2 L7 Lambda LB",
-        "o2 {o2l:8} wide range equivalence ratio": "O2 L8 Lambda LB",
-        "air fuel ratio(measured)": "Air Fuel Ratio(Measured)",
-        "air fuel ratio(commanded)": "Air Fuel Ratio(Commanded)",
-        "0-200kph time": "0→200 km/h",
-        "co\u2082 in g/km (instantaneous)": "CO₂ inst.",
-        "co\u2082 in g/km (average)": "CO₂ moy.",
-        "fuel flow rate/minute": "Fuel flow rate/minute",
-        "fuel cost (trip)": "Fuel cost (trip)",
-        "fuel flow rate/hour": "Fuel flow rate/hour",
-        "60-120mph time": "60-120mph Time",
-        "60-80mph time": "60-80mph Time",
-        "40-60mph time": "40-60mph Time",
-        "80-100mph time": "80-100mph Time",
-        "average trip speed(whilst moving only)": "Vit. moy. (mouv.)",
-        "100-0kph time": "100→0 km/h",
-        "60-0mph time": "60-0mph Time",
-        "trip time(since journey start)": "Temps (depuis départ)",
-        "trip time(whilst stationary)": "Temps (arrêt)",
-        "trip time(whilst moving)": "Temps (mouv.)",
-        "volumetric efficiency (calculated)": "Rdt. volumétrique",
-        "distance to empty (estimated)": "Autonomie (estim.)",
+        "gps satellites": "Satellites GPS",
+        "gps altitude": "Altitude GPS",
+        "gps latitude": "Latitude GPS",
+        "gps accuracy": "Précision GPS",
+        "gps vs obd speed difference": "Écart vit. GPS/OBD",
+        "fuel used (trip)": "Carburant utilisé (trajet)",
+        "gps longitude": "Longitude GPS",
+        "absolute throttle position b": "Position papillon absolue B",
+        "acceleration sensor (total)": "Accéléromètre (total)",
+        "acceleration sensor (x axis)": "Accéléromètre (axe X)",
+        "acceleration sensor (y axis)": "Accéléromètre (axe Y)",
+        "acceleration sensor (z axis)": "Accéléromètre (axe Z)",
+        "accelerator pedalposition d": "Pos. pédale accél. D",
+        "accelerator pedalposition e": "Pos. pédale accél. E",
+        "accelerator pedalposition f": "Pos. pédale accél. F",
+        "air fuel ratio (commanded)": "Rapport air/carburant (ciblé)",
+        "air fuel ratio (measured)": "Rapport air/carburant (mesuré)",
+        "air status": "État air secondaire",
+        "ambient air temp": "Température de l’air ambiant",
+        "average trip speed (whilst moving only)": "Vit. moy. traj. (mouv.)",
+        "average trip speed (whilst stopped or moving)": "Vit. moy. traj. (arrêt+mouv.)",
+        "barometer (on android device)": "Baromètre (appareil)",
+        "barometric pressure (from vehicle)": "Pression barométrique (véhicule)",
+        "catalyst temperature (bank 1 sensor 1)": "Temp. catalyseur (B1 S1)",
+        "catalyst temperature (bank 1 sensor 2)": "Temp. catalyseur (B1 S2)",
+        "catalyst temperature (bank 2 sensor 1)": "Temp. catalyseur (B2 S1)",
+        "catalyst temperature (bank 2 sensor 2)": "Temp. catalyseur (B2 S2)",
+        "commanded equivalence ratio (lambda)": "Lambda commandée",
+        "cost per mile/km (instant)": "Coût par km/mile (inst.)",
+        "cost per mile/km (trip)": "Coût par km/mile (trajet)",
+        "co2 in g/km (average)": "CO₂ g/km (moy.)",
+        "co2 in g/km (instantaneous)": "CO₂ g/km (inst.)",
+        "distance to empty (estimated)": "Autonomie (estimée)",
+        "egr commanded": "EGR commandée",
+        "egr error": "Erreur EGR",
+        "engine kw (at the wheels)": "Puissance kW (roues)",
+        "engine load (absolute)": "Charge moteur (absolue)",
+        "engine oil temperature": "Température d’huile moteur",
+        "ethanol fuel %": "% éthanol",
+        "evap system vapour pressure": "Pression vapeur EVAP",
+        "exhaust gas temperature 1": "Temp. gaz échapp. 1",
+        "exhaust gas temperature 2": "Temp. gaz échapp. 2",
+        "fuel cost (trip)": "Coût carburant (trajet)",
+        "fuel flow rate/hour": "Débit carburant/heure",
+        "fuel flow rate/minute": "Débit carburant/min",
+        "fuel pressure": "Pression carburant",
+        "fuel rail pressure": "Pression rampe",
+        "fuel rail pressure (relative to manifold vacuum)": "Pression rampe (rel. au vide)",
         "fuel remaining (calculated from vehicle profile)": "Carburant restant (profil)",
-        "cost per mile/km (instant)": "Cost per mile/km (Instant)",
-        "cost per mile/km (trip)": "Cost per mile/km (Trip)",
-        "barometer (on android device)": "Baro (appareil)",
-        "fuel used (trip)": "Carburant (trajet)",
-        "average trip speed(whilst stopped or moving)": "Vit. moy. (tot.)",
-        "engine kw (at the wheels)": "kW (roues)",
-        "80-120kph time": "80-120kph Time",
-        "60-130mph time": "60-130mph Time",
-        "0-30mph time": "0→30 mph",
-        "0-100mph time": "0→100 mph",
-        "100-200kph time": "100-200kph Time",
-        "exhaust gas temp bank 1 sensor 2": "T éch. B1 S2",
-        "exhaust gas temp bank 1 sensor 3": "T éch. B1 S3",
-        "exhaust gas temp bank 1 sensor 4": "T éch. B1 S4",
-        "exhaust gas temp bank 2 sensor 2": "T éch. B2 S2",
-        "exhaust gas temp bank 2 sensor 3": "T éch. B2 S3",
-        "exhaust gas temp bank 2 sensor 4": "T éch. B2 S4",
-        "nox post scr": "NOx post SCR",
-        "percentage of city driving": "Percentage of City driving",
-        "percentage of highway driving": "Percentage of Highway driving",
-        "percentage of idle driving": "Percentage of Idle driving",
-        "android device battery level": "Batt. Android",
-        "dpf bank 1 outlet temperature": "T FAP B1 sortie",
-        "dpf bank 2 inlet temperature": "T FAP B2 entrée",
-        "dpf bank 2 outlet temperature": "T FAP B2 sortie",
-        "mass air flow sensor b": "Débit air B",
-        "intake manifold abs pressure b": "P abs. adm. B",
-        "boost pressure commanded b": "Boost cmd. B",
-        "boost pressure sensor a": "Boost capteur A",
-        "boost pressure sensor b": "Boost capteur B",
-        "exhaust pressure bank 2": "P éch. B2",
-        "dpf bank 1 inlet pressure": "P FAP B1 entrée",
-        "dpf bank 1 outlet pressure": "P FAP B1 sortie",
-        "dpf bank 2 inlet pressure": "P FAP B2 entrée",
-        "dpf bank 2 outlet pressure": "P FAP B2 sortie",
-        "hybrid/ev system battery current": "I batt. HV",
-        "hybrid/ev system battery power": "P batt. HV",
-        "positive kinetic energy (pke)": "PKE",
-        "miles per gallon(long term average)": "mpg (moy. LT)",
-        "kilometers per litre(long term average)": "km/L (moy. LT)",
-        "litres per 100 kilometer(long term average)": "L/100 (moy. LT)",
+        "fuel status": "Statut carburant",
+        "fuel trim bank 1 long term": "Ajust. carburant B1 LT",
+        "fuel trim bank 1 sensor 1": "Ajust. carburant B1 S1",
+        "fuel trim bank 1 sensor 2": "Ajust. carburant B1 S2",
+        "fuel trim bank 1 sensor 3": "Ajust. carburant B1 S3",
+        "fuel trim bank 1 sensor 4": "Ajust. carburant B1 S4",
+        "fuel trim bank 1 short term": "Ajust. carburant B1 CT",
+        "fuel trim bank 2 long term": "Ajust. carburant B2 LT",
+        "fuel trim bank 2 sensor 1": "Ajust. carburant B2 S1",
+        "fuel trim bank 2 sensor 2": "Ajust. carburant B2 S2",
+        "fuel trim bank 2 sensor 3": "Ajust. carburant B2 S3",
+        "fuel trim bank 2 sensor 4": "Ajust. carburant B2 S4",
+        "fuel trim bank 2 short term": "Ajust. carburant B2 CT",
+        "horsepower (at the wheels)": "Puissance (roues)",
+        "intake manifold pressure": "Pression collecteur d’admission",
+        "kilometers per litre (instant)": "km/L (inst.)",
+        "kilometers per litre (long term average)": "km/L (moy. LT)",
+        "litres per 100 kilometer (instant)": "L/100 km (inst.)",
+        "litres per 100 kilometer (long term average)": "L/100 km (moy. LT)",
+        "mass air flow rate": "Débit massique d’air",
+        "miles per gallon (instant)": "mpg (inst.)",
+        "miles per gallon (long term average)": "mpg (moy. LT)",
+        "o2 sensor1 equivalence ratio": "Lambda O2 S1",
+        "o2 sensor1 equivalence ratio (alternate)": "Lambda O2 S1 (alt.)",
+        "o2 sensor1 wide-range voltage": "Tension O2 large bande S1",
+        "o2 sensor2 equivalence ratio": "Lambda O2 S2",
+        "o2 sensor2 wide-range voltage": "Tension O2 large bande S2",
+        "o2 sensor3 equivalence ratio": "Lambda O2 S3",
+        "o2 sensor3 wide-range voltage": "Tension O2 large bande S3",
+        "o2 sensor4 equivalence ratio": "Lambda O2 S4",
+        "o2 sensor4 wide-range voltage": "Tension O2 large bande S4",
+        "o2 sensor5 equivalence ratio": "Lambda O2 S5",
+        "o2 sensor5 wide-range voltage": "Tension O2 large bande S5",
+        "o2 sensor6 equivalence ratio": "Lambda O2 S6",
+        "o2 sensor6 wide-range voltage": "Tension O2 large bande S6",
+        "o2 sensor7 equivalence ratio": "Lambda O2 S7",
+        "o2 sensor7 wide-range voltage": "Tension O2 large bande S7",
+        "o2 sensor8 equivalence ratio": "Lambda O2 S8",
+        "o2 sensor8 wide-range voltage": "Tension O2 large bande S8",
+        "o2 volts bank 1 sensor 1": "Tension O2 B1 S1",
+        "o2 volts bank 1 sensor 2": "Tension O2 B1 S2",
+        "o2 volts bank 1 sensor 3": "Tension O2 B1 S3",
+        "o2 volts bank 1 sensor 4": "Tension O2 B1 S4",
+        "o2 volts bank 2 sensor 1": "Tension O2 B2 S1",
+        "o2 volts bank 2 sensor 2": "Tension O2 B2 S2",
+        "o2 volts bank 2 sensor 3": "Tension O2 B2 S3",
+        "o2 volts bank 2 sensor 4": "Tension O2 B2 S4",
+        "relative accelerator pedal position": "Pos. pédale accél. (rel.)",
+        "relative throttle position": "Position papillon (rel.)",
+        "tilt (x)": "Inclinaison (x)",
+        "tilt (y)": "Inclinaison (y)",
+        "tilt (z)": "Inclinaison (z)",
+        "timing advance": "Avance à l’allumage",
+        "torque": "Couple",
+        "transmission temperature (method 1)": "Temp. boîte (M1)",
+        "transmission temperature (method 2)": "Temp. boîte (M2)",
+        "trip average kpl": "km/L (moy. trajet)",
+        "trip average litres/100 km": "L/100 km (moy. trajet)",
+        "trip average mpg": "mpg (moy. trajet)",
+        "trip distance": "Distance du trajet",
+        "trip distance (stored in vehicle profile)": "Distance trajet (profil)",
+        "trip time (since journey start)": "Temps de trajet (depuis départ)",
+        "trip time (whilst moving)": "Temps de trajet (en mouvement)",
+        "trip time (whilst stationary)": "Temps de trajet (à l’arrêt)",
+        "turbo boost & vacuum gauge": "Boost & dépression turbo",
+        "voltage (control module)": "Tension (module de contrôle)",
+        "voltage (obd adapter)": "Tension (adaptateur OBD)",
+        "volumetric efficiency (calculated)": "Rendement volumétrique (calc.)",
     }
 }
+
 
 def _pretty_units(unit: str) -> str:
     return prettyPint.get(unit, unit)
@@ -329,29 +184,16 @@ def _unpretty_units(unit: str) -> str:
 
 
 def _convert_units(value: float, u_in: str, u_out: str):
-    """Convertit via pint si dispo, sinon renvoie la valeur et l'unité d'entrée."""
-    if ureg is None:
-        return {"value": round(float(value), 2), "unit": u_in}
-    try:
-        q_in = ureg.Quantity(value, _to_pint(u_in))
-        q_out = q_in.to(_to_pint(u_out))
-        return {"value": round(q_out.magnitude, 2), "unit": str(q_out.units)}
-    except Exception:  # pragma: no cover
-        return {"value": round(float(value), 2), "unit": u_in}
+    q_in = ureg.Quantity(value, u_in)
+    q_out = q_in.to(u_out)
+    return {"value": round(q_out.magnitude, 2), "unit": str(q_out.units)}
 
 
 def _pretty_convert_units(value: float, u_in: str, u_out: str):
-    """Convertit et renvoie une unité 'jolie' ; si pint absent -> pas de conversion."""
-    res = _convert_units(value, u_in, u_out)
+    p_in = _unpretty_units(u_in)
+    p_out = _unpretty_units(u_out)
+    res = _convert_units(value, p_in, p_out)
     return {"value": res["value"], "unit": _pretty_units(res["unit"])}
-
-
-def _normalize_unit(unit: Optional[str]) -> str:
-    """Corrige les encodages foireux (Â°, etc.) et trim."""
-    if not unit:
-        return ""
-    # retire les 'Â' parasites et normalise le symbole degré
-    return unit.replace("Â°", "°").replace("Â", "").strip()
 
 
 def _localize(lang: str, name: str) -> str:
@@ -386,7 +228,7 @@ class TorqueReceiveDataView(HomeAssistantView):
         try:
             _LOGGER.debug("Torque payload: %s", dict(request.query))
 
-            # Override temporaire via URL ?lang=fr
+            # Permettre override temporaire via URL ?lang=fr
             lang_param = (request.query.get("lang") or request.query.get("language") or "").lower()
             if lang_param in ("en", "fr"):
                 self.lang = lang_param
@@ -396,7 +238,8 @@ class TorqueReceiveDataView(HomeAssistantView):
                 await self._async_publish_data(session)
 
             return web.Response(text="OK!")
-        except Exception as err:  # pragma: no cover
+        except Exception as err:
+            # On log l’erreur mais on renvoie OK pour ne pas casser l’envoi côté Torque
             _LOGGER.exception("Error handling Torque payload: %s", err)
             return web.Response(text="OK!")
 
@@ -484,7 +327,7 @@ class TorqueReceiveDataView(HomeAssistantView):
 
         defaults = TORQUE_CODES[key]
         name: str = self.data[session]["fullName"].get(key, defaults.get("fullName", key))
-        short_in = self.data[session]["shortName"].get(key, defaults.get("shortName", ""))
+        short_name: str = self.data[session]["shortName"].get(key, defaults.get("shortName", key))
         unit: str = self.data[session]["defaultUnit"].get(key, defaults.get("unit", ""))
         value = self.data[session]["value"].get(key)
 
@@ -492,14 +335,7 @@ class TorqueReceiveDataView(HomeAssistantView):
         if self.lang != "en":
             name = _localize(self.lang, name)
 
-        # Slug court et sûr
-        short_slug = slugify(str(short_in)) if short_in else ""
-        if not short_slug or short_slug in ("none", "-"):
-            # fallback sur le nom localisé ou, à défaut, PID
-            short_slug = slugify(str(name)) or f"pid_{key}"
-
-        # Normaliser / trimmer l’unité
-        unit = _normalize_unit(unit)
+        short_name = slugify(str(short_name))
 
         # Conversion en impérial si demandé
         if self.imperial and unit in imperial_units and value not in (None, ""):
@@ -512,7 +348,7 @@ class TorqueReceiveDataView(HomeAssistantView):
 
         return {
             "name": name,
-            "short_name": short_slug,
+            "short_name": short_name,
             "unit": unit,
             "value": value,
         }
@@ -524,7 +360,7 @@ class TorqueReceiveDataView(HomeAssistantView):
         retdata = {"profile": self._get_profile(session), "time": self.data[session]["time"]}
         meta = {}
 
-        for key in list(self.data[session]["value"].keys()):
+        for key in self.data[session]["value"].keys():
             row_data = self._get_field(session, key)
             if row_data is None:
                 continue
@@ -541,8 +377,7 @@ class TorqueReceiveDataView(HomeAssistantView):
         return retdata
 
     async def _async_publish_data(self, session: str):
-        """Valide l’état d’installation, reconstruit un Name si absent, puis pousse vers le coordinator."""
-        # --- GARDE ANTI-STALE ---
+        # --- GARDE ANTI-STALE : ignorer si l'entrée n'est pas chargée ---
         if not getattr(self, "coordinator", None):
             _LOGGER.warning("No coordinator bound to view; dropping payload")
             return
@@ -555,31 +390,23 @@ class TorqueReceiveDataView(HomeAssistantView):
         if entry.state != ConfigEntryState.LOADED:
             _LOGGER.warning("Config entry not loaded (state=%s); dropping payload", entry.state)
             return
-        # -------------------------
+        # -----------------------------------------------------------------
 
         session_data = self._get_data(session)
-        profile = session_data["profile"]
 
-        # Si le nom de véhicule manque, on reconstruit (id/email/session)
-        if not profile.get("Name"):
-            current_id = profile.get("id")
-
-            # Tente de récupérer un Name d’une autre session avec le même id
-            if current_id:
-                other_sessions = [
-                    self.data[key]
-                    for key in self.data.keys()
-                    if self.data[key]["profile"].get("id") == current_id
-                    and self.data[key]["profile"].get("Name")
-                ]
-                if other_sessions:
-                    profile["Name"] = other_sessions[0]["profile"]["Name"]
-
-            # Fallback si toujours rien
-            if not profile.get("Name"):
-                fallback = current_id or profile.get("email") or session or "vehicle"
-                profile["Name"] = str(fallback)
-                _LOGGER.debug("No profile Name; using fallback=%r", profile["Name"])
+        # Ne publie pas tant qu'on n'a pas le nom du véhicule
+        if "Name" not in session_data["profile"]:
+            current_id = session_data["profile"].get("id")
+            other_sessions = [
+                self.data[key]
+                for key in self.data.keys()
+                if self.data[key]["profile"].get("id") == current_id
+                and "Name" in self.data[key]["profile"]
+            ]
+            if not other_sessions:
+                _LOGGER.warning("Missing profile name from torque data.")
+                return
+            session_data["profile"]["Name"] = other_sessions[0]["profile"]["Name"]
 
         # Mémorise par voiture et notifie les entités
         self.coordinator.update_from_session(session_data)

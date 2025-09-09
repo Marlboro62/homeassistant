@@ -18,7 +18,7 @@ from .const import (
     CONF_IMPERIAL,
     CONF_LANGUAGE,
     DEFAULT_LANGUAGE,
-    SUPPORTED_LANGS,  # {"en": "English", "fr": "FranÃ§ais"}
+    SUPPORTED_LANGS,  # {"en": "English", "fr": "Français"}
 )
 
 
@@ -63,26 +63,26 @@ class TorqueLoggerFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     @staticmethod
     @callback
     def async_get_options_flow(config_entry: config_entries.ConfigEntry):
-        """Retourne lâ€™options flow sans passer config_entry (HA lâ€™injectera)."""
+        """Retourne l’options flow sans passer config_entry (HA l’injectera)."""
         return TorqueLoggerOptionsFlowHandler()
 
 
 class TorqueLoggerOptionsFlowHandler(config_entries.OptionsFlow):
     """Options flow pour Torque Logger 2025.
 
-    NOTE: Ne pas dÃ©finir __init__ ni assigner self.config_entry â€” HA le gÃ¨re.
+    NOTE: Ne pas définir __init__ ni assigner self.config_entry — HA le gère.
     """
 
     async def async_step_init(self, user_input: dict | None = None):
-        """GÃ©rer le formulaire dâ€™options."""
-        # PrÃ©pare les options du sÃ©lecteur (label / value)
+        """Gérer le formulaire d’options."""
+        # Prépare les options du sélecteur (label / value)
         lang_options = [
             {"label": label, "value": code}
             for code, label in sorted(SUPPORTED_LANGS.items(), key=lambda kv: kv[1])
         ]
 
         if user_input is not None:
-            # On stocke uniquement les options (impÃ©rial/langue)
+            # On stocke uniquement les options (impérial/langue)
             return self.async_create_entry(title="", data=user_input)
 
         # Valeurs actuelles (fallback sur data si options absentes)
@@ -105,4 +105,3 @@ class TorqueLoggerOptionsFlowHandler(config_entries.OptionsFlow):
             }
         )
         return self.async_show_form(step_id="init", data_schema=data_schema)
-

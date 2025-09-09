@@ -1,18 +1,15 @@
 # -*- coding: utf-8 -*-
 """Sensor platform for Torque Logger 2025."""
-from __future__ import annotations
 
 import logging
 import re
 from typing import TYPE_CHECKING, List
-
 from homeassistant.components.sensor import RestoreSensor
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers import entity_registry as er, device_registry as dr
 from homeassistant.helpers.entity import DeviceInfo
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.util import slugify
+from homeassistant.helpers import entity_registry as er, device_registry as dr
 
 from .const import (
     CITY_ICON,
@@ -30,6 +27,7 @@ from .entity import TorqueEntity
 if TYPE_CHECKING:
     from .coordinator import TorqueLoggerCoordinator
 
+
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 
@@ -40,34 +38,10 @@ async def async_setup_entry(
     coordinator: "TorqueLoggerCoordinator" = hass.data[DOMAIN][entry.entry_id]["coordinator"]
     coordinator.async_add_sensor = async_add_entities
 
+    # Restore previously loaded sensors
     ent_reg = er.async_get(hass)
     dev_reg = dr.async_get(hass)
 
-    # --- Migration: corriger les anciens entity_id avec double préfixe <car>_<car>_ ---
-    migrated = 0
-    for er_ent in list(ent_reg.entities.values()):
-        if er_ent.domain != SENSOR or not er_ent.entity_id.startswith("sensor."):
-            continue
-        device = dev_reg.async_get(er_ent.device_id) if er_ent.device_id else None
-        if not device:
-            continue
-        car_slug = slugify(device.name or device.model or "")
-        if not car_slug:
-            continue
-        dup_prefix = f"sensor.{car_slug}_{car_slug}_"
-        if er_ent.entity_id.startswith(dup_prefix):
-            new_entity_id = er_ent.entity_id.replace(f"{car_slug}_{car_slug}_", f"{car_slug}_", 1)
-            try:
-                ent_reg.async_update_entity(er_ent.entity_id, new_entity_id=new_entity_id)
-                migrated += 1
-                _LOGGER.info("Migrated entity_id %s -> %s", er_ent.entity_id, new_entity_id)
-            except Exception as err:
-                _LOGGER.debug("Migration failed for %s: %s", er_ent.entity_id, err)
-    if migrated:
-        _LOGGER.info("Torque Logger: %d entity_id migrated to remove double car prefix", migrated)
-    # -------------------------------------------------------------------------------
-
-    # Restauration des capteurs connus (basée sur unique_id stable)
     devices = [
         device
         for device in dev_reg.devices.values()
@@ -99,7 +73,7 @@ async def async_setup_entry(
             TorqueSensor(
                 coordinator,
                 entry,
-                er_ent.unique_id[len(prefix):],
+                er_ent.unique_id[len(prefix) :],
                 device_info,
             )
             for er_ent in ent_reg.entities.values()
@@ -133,26 +107,14 @@ class TorqueSensor(TorqueEntity, RestoreSensor):
     ):
         super().__init__(coordinator, config_entry, sensor_key, device)
 
-        # Métadonnées propres à la voiture
-        meta_all = self.coordinator.get_meta(self._car_id)
-        meta = meta_all.get(self.sensor_key, {}) if meta_all else {}
+        # Lis les meta de TA voiture (pas la dernière trame globale)
+        meta = self.coordinator.get_meta(self._car_id)
+        if meta and self.sensor_key in meta:
+            self._attr_native_unit_of_measurement = meta[self.sensor_key].get("unit")
+            self._attr_name = meta[self.sensor_key].get("name")
+            self._set_icon()
 
-        # Libellé et unité toujours sûrs
-        label = str(meta.get("name") or self.sensor_key or "value").strip()
-        unit = (meta.get("unit") or "").strip() or None
-
-        # Nom visible SANS préfix voiture (HA l'ajoute via has_entity_name=True)
-        self._attr_name = label
-        # Unité native
-        self._attr_native_unit_of_measurement = unit
-
-        # ID unique STABLE (ne dépend pas du libellé ni de la langue)
-        self._attr_unique_id = f"{DOMAIN}_{config_entry.entry_id}_{self._car_id}_{self.sensor_key}"
-
-        # Icône
-        self._set_icon()
-
-        # Valeur restaurée éventuelle
+        # Ne pas forcer entity_id : unique_id + nom suffisent
         self._restored_state = None
 
     @property
@@ -184,42 +146,27 @@ class TorqueSensor(TorqueEntity, RestoreSensor):
         self._restored_state = native_state.native_value
 
         # Si pas de meta encore reçue pour cette voiture, restaure nom/unité
-        if not self._attr_name:
-            # Pas de préfixe voiture ici (évite les doublons), HA le fera via has_entity_name
-            self._attr_name = state.name or self.sensor_key
-
+        if self._attr_name is None:
+            self._attr_name = state.name
         if self._attr_native_unit_of_measurement is None:
             self._attr_native_unit_of_measurement = native_state.native_unit_of_measurement
 
         self._set_icon()
 
-    # ----------------- Helpers -----------------
-
     def _set_icon(self) -> None:
-        """Choisit une icône cohérente selon le nom/sensor_key (FR/EN)."""
-        name = (self._attr_name or "").lower()
-        key = (self.sensor_key or "").lower()
-
+        name = self._attr_name or ""
         self._attr_icon = DEFAULT_ICON
-
-        # Distance
-        if re.search(r"\b(distance|kilometers?|miles?)\b", name) or "distance" in key:
+        if re.search(r"kilometers|miles", name, re.IGNORECASE):
             self._attr_icon = DISTANCE_ICON
-
-        # Carburant
-        if re.search(r"\b(fuel|carburant|litre|gallon)\b", name) or "fuel" in key:
+        if re.search(r"litre|gallon", name, re.IGNORECASE):
             self._attr_icon = FUEL_ICON
-
-        # Temps
-        if re.search(r"\b(time|temps|idle)\b", name):
+        if re.search(r"distance", name, re.IGNORECASE):
+            self._attr_icon = DISTANCE_ICON
+        if re.search(r"time|idle", name, re.IGNORECASE):
             self._attr_icon = TIME_ICON
-
-        # Ville/route
-        if re.search(r"\b(highway|autoroute)\b", name):
+        if re.search(r"highway", name, re.IGNORECASE):
             self._attr_icon = HIGHWAY_ICON
-        if re.search(r"\b(city|ville)\b", name):
+        if re.search(r"city", name, re.IGNORECASE):
             self._attr_icon = CITY_ICON
-
-        # Vitesse (FR + EN + clé technique)
-        if re.search(r"\b(speed|vitesse)\b", name) or key in ("speed", "gps_spd"):
+        if re.search(r"speed", name, re.IGNORECASE):
             self._attr_icon = SPEED_ICON
