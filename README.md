@@ -72,6 +72,7 @@ C’est simple, rapide, et prêt pour vos tableaux de bord de passionné. 🔧�
 
 <a id="configuration-ha"></a>
 ## ⚙️ Configuration côté Home Assistant
+
 💡 Ressources Images Installation: [Voir les images](https://github.com/Marlboro62/homeassistant/tree/main/docs/images/installation)
 1. **Paramètres → Intégrations → Ajouter une intégration → “Torque Logger 2025”**  
 2. Renseignez :
@@ -102,20 +103,19 @@ Dans **Torque Pro** :
 
 <a id="tests-rapides"></a>
 ## 🧪 Tests rapides (sans Torque) avec PowerShell Windows
+
 💡 Ressources BASH : [Voir les images](https://github.com/Marlboro62/homeassistant/tree/main/docs/images/curl)
 
 **Vitesse OBD (PID `0x0D`) :**
 ```bash
 curl "http://HA:8123/api/torque_logger_2025?session=A1&id=devA&eml=votre@mail.tld&profileName=Ma%20Voiture&v=1.0&time=1694090000&userFullName0d=Vehicle%20speed&userShortName0d=speed&defaultUnit0d=km/h&k0d=250"
 curl "https://xxx.duckdns.org/api/torque_logger_2025?session=A1&id=devA&eml=votre@mail.tld&profileName=Ma%20Voiture&v=1.0&time=1694090000&userFullName0d=Vehicle%20speed&userShortName0d=speed&defaultUnit0d=km/h&k0d=250"
-
 ```
 
 **Vitesse GPS (PID ff1001) ::**
 ```bash
 curl "http://HA:8123/api/torque_logger_2025?session=A1&id=devA&eml=votre@mail.tld&profileName=Ma%20Voiture&v=1.0&time=1694090100&userFullNameff1001=Vehicle%20speed%20(GPS)&userShortNameff1001=gps_spd&defaultUnitff1001=km/h&kff1001=142"
 curl "https://xxx.duckdns.org/api/torque_logger_2025?session=A1&id=devA&eml=votre@mail.tld&profileName=Ma%20Voiture&v=1.0&time=1694090100&userFullNameff1001=Vehicle%20speed%20(GPS)&userShortNameff1001=gps_spd&defaultUnitff1001=km/h&kff1001=142"
-
 ```
 
 <a id="capteurs-gps"></a>
