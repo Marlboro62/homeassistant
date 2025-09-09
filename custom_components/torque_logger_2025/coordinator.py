@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Torque Logger 2025 Coordinator."""
+"""Torque Logger Coordinator."""
 from __future__ import annotations
 
 import logging
@@ -60,12 +60,20 @@ class TorqueLoggerCoordinator(DataUpdateCoordinator):
 
     # ---------- Helpers ----------
     def _vehicle_key(self, profile: dict) -> str:
-        """Clé stable de l'appareil: entry_id + id (fallback: slug du Name)."""
-        raw_id = profile.get("id")
-        if raw_id:
-            base = str(raw_id).strip()
+        """Clé stable de l'appareil.
+        - Si on a `id` ET `Name` -> entry:id:slug(name)  (permet 1 device par profil sur le même dongle)
+        - Sinon fallback : id, puis slug(Name), puis 'vehicle'
+        """
+        rid = (profile.get("id") or "").strip()
+        name_slug = slugify(profile.get("Name") or "")
+        if rid and name_slug:
+            base = f"{rid}:{name_slug}"
+        elif rid:
+            base = rid
+        elif name_slug:
+            base = name_slug
         else:
-            base = slugify(profile.get("Name", "vehicle"))
+            base = "vehicle"
         return f"{self.entry.entry_id}:{base}"
 
     # ---------- Lecture de données ----------
