@@ -639,7 +639,7 @@ TORQUE_CODES: Final = {
   "ff1225": {
     "shortName": "torque",
     "fullName": "Torque",
-    "unit": "Nm"
+    "unit": "ft-lb"
   },
   "fe1805": {
     "shortName": "transmission_temperature_method_1",

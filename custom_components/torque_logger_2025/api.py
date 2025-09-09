@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-"""Torque Logger 2025 API Client/DataView."""
+"""Torque Logger API Client/DataView."""
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Optional
@@ -22,9 +21,7 @@ _LOGGER: logging.Logger = logging.getLogger(__package__)
 ureg = pint.UnitRegistry()
 
 # Mappage d’unités pour l’affichage "joli" et les conversions impériales
-
 imperial_units = {"km": "mi", "°C": "°F", "km/h": "mph", "m": "ft"}
-
 prettyPint = {
     "degC": "°C",
     "degF": "°F",
@@ -265,19 +262,19 @@ class TorqueReceiveDataView(HomeAssistantView):
             if key.startswith("userUnit"):
                 continue
             if key.startswith("userShortName"):
-                item = key[13:]
+                item = key[13:].lower()
                 self.data[session]["shortName"][item] = value
                 continue
             if key.startswith("userFullName"):
-                item = key[12:]
+                item = key[12:].lower()
                 self.data[session]["fullName"][item] = value
                 continue
             if key.startswith("defaultUnit"):
-                item = key[11:]
+                item = key[11:].lower()
                 self.data[session]["defaultUnit"][item] = value
                 continue
             if key.startswith("k"):
-                item = key[1:]
+                item = key[1:].lower()
                 if len(item) == 1:
                     item = "0" + item
                 self.data[session]["value"][item] = value

@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 """Sensor platform for Torque Logger 2025."""
 
+from __future__ import annotations
+
 import logging
 import re
+import math
 from typing import TYPE_CHECKING, List
+
 from homeassistant.components.sensor import RestoreSensor
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.config_entries import ConfigEntry
@@ -49,7 +53,7 @@ async def async_setup_entry(
     ]
     _LOGGER.debug("%d devices found for restore", len(devices))
 
-    to_add: List[TorqueEntity] = []
+    to_add: List["TorqueSensor"] = []
 
     for device in devices:
         # car_id depuis l'identifier (DOMAIN, car_id)
@@ -95,6 +99,28 @@ async def async_setup_entry(
         async_add_entities(to_add)
 
 
+# --- Helpers -----------------------------------------------------------------
+
+def _to_finite_float(val):
+    """Retourne un float fini ou None (filtre NaN/±inf et erreurs de cast)."""
+    try:
+        f = float(val)
+    except (ValueError, TypeError):
+        return None
+    return f if math.isfinite(f) else None
+
+
+def _title_from_key(key: str) -> str:
+    """Nom lisible par défaut à partir d'une clé slug (fallback si pas de meta)."""
+    s = key.replace("_", " ").strip()
+    # petites normalisations usuelles
+    s = re.sub(r"\bkmh\b", "km/h", s, flags=re.I)
+    s = re.sub(r"\bkph\b", "km/h", s, flags=re.I)
+    return s[:1].upper() + s[1:]
+
+
+# --- Entity ------------------------------------------------------------------
+
 class TorqueSensor(TorqueEntity, RestoreSensor):
     """Torque Sensor class."""
 
@@ -107,32 +133,72 @@ class TorqueSensor(TorqueEntity, RestoreSensor):
     ):
         super().__init__(coordinator, config_entry, sensor_key, device)
 
-        # Lis les meta de TA voiture (pas la dernière trame globale)
+        # Toujours initialiser pour éviter AttributeError
+        self._attr_name = None
+        self._attr_native_unit_of_measurement = None
+        self._attr_icon = DEFAULT_ICON
+        self._restored_state = None
+
+        # 1) Essaye d'abord les métadonnées de la voiture
         meta = self.coordinator.get_meta(self._car_id)
         if meta and self.sensor_key in meta:
             self._attr_native_unit_of_measurement = meta[self.sensor_key].get("unit")
             self._attr_name = meta[self.sensor_key].get("name")
-            self._set_icon()
 
-        # Ne pas forcer entity_id : unique_id + nom suffisent
-        self._restored_state = None
+        # 2) Sinon, nom de secours depuis la clé
+        if self._attr_name is None:
+            self._attr_name = _title_from_key(self.sensor_key)
+
+        self._set_icon()
+
+    # --- Rafraîchissement dynamique des métadonnées quand le coordinator bouge
+
+    def _maybe_refresh_metadata(self) -> None:
+        """Si meta fournit name/unit pour ce capteur, mets à jour et pousse l'état."""
+        meta = self.coordinator.get_meta(self._car_id)
+        if not meta or self.sensor_key not in meta:
+            return
+        m = meta[self.sensor_key]
+        changed = False
+
+        new_name = m.get("name")
+        if new_name and new_name != self._attr_name:
+            self._attr_name = new_name
+            changed = True
+
+        new_unit = m.get("unit")
+        if new_unit and new_unit != self._attr_native_unit_of_measurement:
+            self._attr_native_unit_of_measurement = new_unit
+            changed = True
+
+        if changed:
+            self._set_icon()
+            self.async_write_ha_state()
+
+    def _handle_coordinator_update(self) -> None:
+        """Appelé à chaque update du CoordinatorEntity."""
+        self._maybe_refresh_metadata()
+        super()._handle_coordinator_update()
+
+    # --- Valeur native (avec filtre inf/NaN)
 
     @property
     def native_value(self):
         """Return the native value of the sensor (per car)."""
         value = self.coordinator.get_value(self._car_id, self.sensor_key)
-        if value is not None:
-            try:
-                return round(float(value), 2)
-            except (ValueError, TypeError):
-                return None
-        elif self._restored_state is not None:
-            try:
-                return round(float(self._restored_state), 2)
-            except (ValueError, TypeError):
-                return None
-        else:
-            return None
+
+        f = _to_finite_float(value)
+        if f is not None:
+            return round(f, 2)
+
+        # fallback sur l'état restauré (si c'est numérique et fini)
+        if self._restored_state is not None:
+            f = _to_finite_float(self._restored_state)
+            if f is not None:
+                return round(f, 2)
+
+        # Sinon, pas de valeur exploitable → état indisponible
+        return None
 
     async def async_added_to_hass(self) -> None:
         """Handle entity which will be added."""
@@ -147,7 +213,7 @@ class TorqueSensor(TorqueEntity, RestoreSensor):
 
         # Si pas de meta encore reçue pour cette voiture, restaure nom/unité
         if self._attr_name is None:
-            self._attr_name = state.name
+            self._attr_name = state.name or _title_from_key(self.sensor_key)
         if self._attr_native_unit_of_measurement is None:
             self._attr_native_unit_of_measurement = native_state.native_unit_of_measurement
 
