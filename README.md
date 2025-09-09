@@ -1,5 +1,5 @@
-# 🚗 [FR] [ BETA ] Torque Logger 2025 — Intégration Home Assistant
-# 🚗 [EN] [ BETA ] Torque Logger 2025 — Home Assistant Integration  
+# 🚗 [FR] Torque Logger 2025 — Intégration Home Assistant
+# 🚗 [EN] Torque Logger 2025 — Home Assistant Integration  
 👉 [README in English](https://github.com/Marlboro62/homeassistant/blob/main/README.en.md)
 
 **Domaine :** `torque_logger_2025` · **Version :** `2025.09.5` · **IoT class :** `local_push`
@@ -172,10 +172,11 @@ curl "https://xxx.duckdns.org/api/torque_logger_2025?session=A1&id=devA&profileN
 - Intégration **Config Flow (UI)**.
 - **FR/EN** pour les libellés.
 - Option **Unités impériales**.
-- **Création automatique** des capteurs (incluant PIDs GPS hors lat/lon).
+- **Création automatique** des capteurs (incluant PIDs GPS hors lat/lon). 💡 Visuel HA : [Voir les images](https://github.com/Marlboro62/homeassistant/tree/main/docs/images/capture)
 - **Device tracker** basé sur `gpslat`/`gpslon`.
 - **Suppression fine** d’un véhicule depuis l’UI (sans retirer l’intégration).
-- ** Ajout de tous les PID connu de Torque**. 💡 Ressources: [Voir les images](https://github.com/Marlboro62/homeassistant/blob/main/docs/List%20PID%20Torque.md)
+- ** Ajout de tous les PID connu de Torque**. 💡 Ressources: [Voir les PID](https://github.com/Marlboro62/homeassistant/blob/main/docs/List%20PID%20Torque.md)
+
 <a id="securite"></a>
 ## 🔐 Sécurité & bonnes pratiques
 
