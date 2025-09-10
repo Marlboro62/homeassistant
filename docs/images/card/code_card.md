@@ -46,7 +46,7 @@ Type : module
 
 > ⚠️ If it’s not there, add it manually.
 
-
+```bash
 
 
 type: vertical-stack
@@ -133,3 +133,4 @@ cards:
           - from: 150
             to: 9999
             color: "#4caf50"
+```			
