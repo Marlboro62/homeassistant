@@ -201,6 +201,8 @@ Ajustez la **fréquence d’upload** dans Torque pour éviter de surcharger la b
 <p align="center">
   <img src="docs/images/card/card.png" alt="Carte HA" width="1024">
 </p>
+
+<a id="remerciements_s"></a>
 ## 🌟 Remerciements spéciaux
 Merci aux projets développés par :  
 - [@junalmeida](https://github.com/junalmeida/homeassistant-torque)  
