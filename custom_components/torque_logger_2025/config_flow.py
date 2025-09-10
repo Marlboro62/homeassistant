@@ -28,9 +28,9 @@ class TorqueLoggerFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def async_step_user(self, user_input: dict | None = None):
         """Handle the initial step."""
-        # Une seule instance
-        if self._async_current_entries():
-            return self.async_abort(reason="single_instance_allowed")
+        # Verrouille l'unicité de l'intégration (une seule instance)
+        await self.async_set_unique_id(DOMAIN)
+        self._abort_if_unique_id_configured()
 
         # Options (label/value) pour le SelectSelector
         lang_options = [
@@ -40,7 +40,7 @@ class TorqueLoggerFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
         if user_input is not None:
             data = {
-                CONF_EMAIL: user_input.get(CONF_EMAIL, "").strip(),
+                CONF_EMAIL: user_input[CONF_EMAIL].strip(),
                 CONF_IMPERIAL: bool(user_input.get(CONF_IMPERIAL, False)),
                 CONF_LANGUAGE: user_input.get(CONF_LANGUAGE, DEFAULT_LANGUAGE),
             }
@@ -48,7 +48,7 @@ class TorqueLoggerFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
         data_schema = vol.Schema(
             {
-                vol.Optional(CONF_EMAIL, default=""): str,
+                vol.Required(CONF_EMAIL): vol.Email(),
                 vol.Optional(CONF_IMPERIAL, default=False): bool,
                 vol.Optional(CONF_LANGUAGE, default=DEFAULT_LANGUAGE): SelectSelector(
                     SelectSelectorConfig(
@@ -92,6 +92,9 @@ class TorqueLoggerOptionsFlowHandler(config_entries.OptionsFlow):
         current_language = self.config_entry.options.get(
             CONF_LANGUAGE, self.config_entry.data.get(CONF_LANGUAGE, DEFAULT_LANGUAGE)
         )
+        # Si la langue enregistrée n'est plus supportée, repartir sur le défaut
+        if current_language not in SUPPORTED_LANGS:
+            current_language = DEFAULT_LANGUAGE
 
         data_schema = vol.Schema(
             {

@@ -24,6 +24,20 @@ from .const import (
 _LOGGER: logging.Logger = logging.getLogger(__name__)
 
 
+async def async_migrate_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+    """Migrate old entry data to the latest version.
+
+    - v<2 -> v2 : injecte la langue par défaut si absente.
+    """
+    if entry.version < 2:
+        data = dict(entry.data)
+        if CONF_LANGUAGE not in data:
+            data[CONF_LANGUAGE] = DEFAULT_LANGUAGE
+        hass.config_entries.async_update_entry(entry, data=data, version=2)
+        _LOGGER.debug("Migrated config entry %s to version 2", entry.entry_id)
+    return True
+
+
 async def async_setup(hass: HomeAssistant, config: dict) -> bool:
     """YAML setup is not supported."""
     return True
@@ -54,17 +68,23 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         view.email = email or ""
         view.imperial = bool(imperial)
         view.lang = (language or DEFAULT_LANGUAGE).lower()
-        _LOGGER.debug("Torque view updated (email=%s, imperial=%s, lang=%s)", view.email, view.imperial, view.lang)
+        _LOGGER.debug(
+            "Torque view updated (email=%s, imperial=%s, lang=%s)",
+            view.email,
+            view.imperial,
+            view.lang,
+        )
 
     # Store par entrée
-    store: dict = {"data": {}}  # buffer session si tu veux l’exploiter côté vue
+    store: dict = {"data": {}}
     domain_store[entry.entry_id] = store
 
-    # Si tu veux que la vue partage ce buffer (facultatif, utile en multi-sessions Torque)
+    # Partage du buffer de session avec la vue (facultatif, utile en multi-sessions Torque)
     domain_store["view"].data = store["data"]
 
     # Coordinator
     coordinator = TorqueLoggerCoordinator(hass, domain_store["view"], entry)
+    # (Le coordinator fixe aussi client.coordinator = self dans son __init__)
     domain_store["view"].coordinator = coordinator
     store["coordinator"] = coordinator
 
@@ -79,7 +99,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload platforms and detach this entry from the view/coordinator."""
     results = await asyncio.gather(
-        *[hass.config_entries.async_forward_entry_unload(entry, platform) for platform in PLATFORMS]
+        *[
+            hass.config_entries.async_forward_entry_unload(entry, platform)
+            for platform in PLATFORMS
+        ]
     )
     unloaded = all(results)
     if not unloaded:
@@ -91,7 +114,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     domain_store: dict = hass.data[DOMAIN]
 
     # Détache et purge le cache de cette entry
-    store = domain_store.pop(entry.entry_id, None)
+    domain_store.pop(entry.entry_id, None)
 
     # S'il ne reste plus aucune entry active, on garde la vue enregistrée
     # mais on la met au neutre pour éviter toute réutilisation de vieux pointeurs.

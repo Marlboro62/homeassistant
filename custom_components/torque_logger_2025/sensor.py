@@ -101,6 +101,7 @@ async def async_setup_entry(
 
 # --- Helpers -----------------------------------------------------------------
 
+
 def _to_finite_float(val):
     """Retourne un float fini ou None (filtre NaN/±inf et erreurs de cast)."""
     try:
@@ -120,6 +121,7 @@ def _title_from_key(key: str) -> str:
 
 
 # --- Entity ------------------------------------------------------------------
+
 
 class TorqueSensor(TorqueEntity, RestoreSensor):
     """Torque Sensor class."""
@@ -220,19 +222,55 @@ class TorqueSensor(TorqueEntity, RestoreSensor):
         self._set_icon()
 
     def _set_icon(self) -> None:
-        name = self._attr_name or ""
+        """Détermine l'icône en priorité à partir de l'unité, puis fallback sur le nom."""
         self._attr_icon = DEFAULT_ICON
-        if re.search(r"kilometers|miles", name, re.IGNORECASE):
+
+        # Unité normalisée (sans espaces, en minuscules)
+        u = (self._attr_native_unit_of_measurement or "").strip().lower()
+        u = u.replace(" ", "")
+        # petites normalisations usuelles
+        u = u.replace("kmh", "km/h").replace("kph", "km/h")
+
+        name = (self._attr_name or "")
+
+        # Groupes d’unités pour mapping direct
+        speed_units = {"km/h", "mph", "m/s", "kn"}
+        distance_units = {"km", "mi", "m", "ft"}
+        fuel_units = {"l/100km", "mpg", "km/l", "l", "gal", "wh/km", "kwh/100km", "gph"}
+        time_units = {"s", "sec", "secs", "secondes", "min", "mins", "h", "hr", "hrs", "ms"}
+
+        if u in distance_units:
             self._attr_icon = DISTANCE_ICON
-        if re.search(r"litre|gallon", name, re.IGNORECASE):
-            self._attr_icon = FUEL_ICON
-        if re.search(r"distance", name, re.IGNORECASE):
-            self._attr_icon = DISTANCE_ICON
-        if re.search(r"time|idle", name, re.IGNORECASE):
-            self._attr_icon = TIME_ICON
-        if re.search(r"highway", name, re.IGNORECASE):
-            self._attr_icon = HIGHWAY_ICON
-        if re.search(r"city", name, re.IGNORECASE):
-            self._attr_icon = CITY_ICON
-        if re.search(r"speed", name, re.IGNORECASE):
+            return
+        if u in speed_units:
             self._attr_icon = SPEED_ICON
+            return
+        if u in fuel_units:
+            self._attr_icon = FUEL_ICON
+            return
+        if u in time_units:
+            self._attr_icon = TIME_ICON
+            return
+
+        # Fallback sur le nom (FR/EN) si l’unité est absente/inconnue
+        n = name.lower()
+        if re.search(r"\b(distance|kilometers?|miles?|kilom(è|e)tres?)\b", n, re.IGNORECASE):
+            self._attr_icon = DISTANCE_ICON
+            return
+        if re.search(r"\b(speed|vitesse)\b", n, re.IGNORECASE):
+            self._attr_icon = SPEED_ICON
+            return
+        if re.search(
+            r"\b(litre?s?|gallons?|fuel|carburant|essence|diesel)\b", n, re.IGNORECASE
+        ) or re.search(r"\b(l/100 ?km|mpg|km/l|wh/km|kwh/100km|gph)\b", n, re.IGNORECASE):
+            self._attr_icon = FUEL_ICON
+            return
+        if re.search(r"\b(time|min|sec|dur(é|e)e|ralenti|idle)\b", n, re.IGNORECASE):
+            self._attr_icon = TIME_ICON
+            return
+        if re.search(r"\b(autoroute|highway)\b", n, re.IGNORECASE):
+            self._attr_icon = HIGHWAY_ICON
+            return
+        if re.search(r"\b(ville|city)\b", n, re.IGNORECASE):
+            self._attr_icon = CITY_ICON
+            return

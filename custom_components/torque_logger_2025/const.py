@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 """Constants for Torque Logger 2025"""
+from __future__ import annotations
+
 # Base component constants
 from typing import Final
 import json
@@ -7,19 +9,24 @@ import os
 
 NAME: Final = "Torque Logger 2025"
 DOMAIN: Final = "torque_logger_2025"
+
+# Lecture sécurisée de la version depuis manifest.json
 _manifest = os.path.join(os.path.dirname(__file__), "manifest.json")
-with open(_manifest, encoding="utf-8") as file:
-    VERSION: Final = json.load(file)["version"]
+try:
+    with open(_manifest, encoding="utf-8") as file:
+        VERSION: Final = json.load(file).get("version", "0.0.0")
+except Exception:
+    VERSION: Final = "0.0.0"
+
 ATTRIBUTION: Final = "Torque Pro 2025"
 ISSUE_URL: Final = "https://github.com/Marlboro62/homeassistant/issues"
-ENTITY_PICTURE_URL: Final = "/local/torque/logo.jpg"
 
 # CONF
 CONF_EMAIL: Final = "email"
 CONF_IMPERIAL: Final = "imperial"
-# Langue (nouveau)
+# Langue (défaut FR)
 CONF_LANGUAGE: Final = "language"
-DEFAULT_LANGUAGE: Final = "en"
+DEFAULT_LANGUAGE: Final = "fr"
 SUPPORTED_LANGS: Final = {"en": "English", "fr": "Français"}
 
 # Platforms
@@ -37,7 +44,7 @@ If you have any issues with this you need to open an issue here:
 -------------------------------------------------------------------
 """
 
-# DEFAULTs
+# DEFAULTs (icônes)
 DEFAULT_ICON: Final = "mdi:engine"
 GPS_ICON: Final = "mdi:car"
 DISTANCE_ICON: Final = "mdi:map-marker-distance"
@@ -712,338 +719,338 @@ TORQUE_CODES: Final = {
     "unit": "%"
   },
   "35": {
-    "shortName": 'o2_o2l2_wide_current',
-    "fullName": 'O2 {O2L:2} Wide Range Current',
-    "unit": 'mA'
+    "shortName": "o2_o2l2_wide_current",
+    "fullName": "O2 {O2L:2} Wide Range Current",
+    "unit": "mA"
   },
   "36": {
-    "shortName": 'o2_o2l3_wide_current',
-    "fullName": 'O2 {O2L:3} Wide Range Current',
-    "unit": 'mA'
+    "shortName": "o2_o2l3_wide_current",
+    "fullName": "O2 {O2L:3} Wide Range Current",
+    "unit": "mA"
   },
   "37": {
-    "shortName": 'o2_o2l4_wide_current',
-    "fullName": 'O2 {O2L:4} Wide Range Current',
-    "unit": 'mA'
+    "shortName": "o2_o2l4_wide_current",
+    "fullName": "O2 {O2L:4} Wide Range Current",
+    "unit": "mA"
   },
   "38": {
-    "shortName": 'o2_o2l5_wide_current',
-    "fullName": 'O2 {O2L:5} Wide Range Current',
-    "unit": 'mA'
+    "shortName": "o2_o2l5_wide_current",
+    "fullName": "O2 {O2L:5} Wide Range Current",
+    "unit": "mA"
   },
   "39": {
-    "shortName": 'o2_o2l6_wide_current',
-    "fullName": 'O2 {O2L:6} Wide Range Current',
-    "unit": 'mA'
+    "shortName": "o2_o2l6_wide_current",
+    "fullName": "O2 {O2L:6} Wide Range Current",
+    "unit": "mA"
   },
   "3a": {
-    "shortName": 'o2_o2l7_wide_current',
-    "fullName": 'O2 {O2L:7} Wide Range Current',
-    "unit": 'mA'
+    "shortName": "o2_o2l7_wide_current",
+    "fullName": "O2 {O2L:7} Wide Range Current",
+    "unit": "mA"
   },
   "3b": {
-    "shortName": 'o2_o2l8_wide_current',
-    "fullName": 'O2 {O2L:8} Wide Range Current',
-    "unit": 'mA'
+    "shortName": "o2_o2l8_wide_current",
+    "fullName": "O2 {O2L:8} Wide Range Current",
+    "unit": "mA"
   },
   "5b": {
-    "shortName": 'hybrid_ev_batt_charge',
-    "fullName": 'Hybrid Battery Charge (%)',
-    "unit": '%'
+    "shortName": "hybrid_ev_batt_charge",
+    "fullName": "Hybrid Battery Charge (%)",
+    "unit": "%"
   },
   "5e": {
-    "shortName": 'fuel_rate_ecu',
-    "fullName": 'Fuel Rate (direct from ECU)',
-    "unit": 'L/min'
+    "shortName": "fuel_rate_ecu",
+    "fullName": "Fuel Rate (direct from ECU)",
+    "unit": "L/min"
   },
   "61": {
-    "shortName": 'driver_demand_engine_torque_pct',
-    "fullName": 'Drivers demand engine % torque',
-    "unit": '%'
+    "shortName": "driver_demand_engine_torque_pct",
+    "fullName": "Drivers demand engine % torque",
+    "unit": "%"
   },
   "62": {
-    "shortName": 'actual_engine_torque_pct',
-    "fullName": 'Actual engine % torque',
-    "unit": '%'
+    "shortName": "actual_engine_torque_pct",
+    "fullName": "Actual engine % torque",
+    "unit": "%"
   },
   "63": {
-    "shortName": 'engine_reference_torque',
-    "fullName": 'Engine reference torque',
-    "unit": 'Nm'
+    "shortName": "engine_reference_torque",
+    "fullName": "Engine reference torque",
+    "unit": "Nm"
   },
   "66": {
-    "shortName": 'maf_sensor_a',
-    "fullName": 'Mass air flow sensor A',
-    "unit": 'g/s'
+    "shortName": "maf_sensor_a",
+    "fullName": "Mass air flow sensor A",
+    "unit": "g/s"
   },
   "70": {
-    "shortName": 'boost_pressure_commanded_a',
-    "fullName": 'Boost Pressure Commanded A',
-    "unit": 'kPa'
+    "shortName": "boost_pressure_commanded_a",
+    "fullName": "Boost Pressure Commanded A",
+    "unit": "kPa"
   },
   "73": {
-    "shortName": 'exhaust_pressure_b1',
-    "fullName": 'Exhaust Pressure Bank 1',
-    "unit": 'kPa'
+    "shortName": "exhaust_pressure_b1",
+    "fullName": "Exhaust Pressure Bank 1",
+    "unit": "kPa"
   },
   "77": {
-    "shortName": 'charge_air_cooler_temp',
-    "fullName": 'Charge air cooler temperature (CACT)',
-    "unit": '°C'
+    "shortName": "charge_air_cooler_temp",
+    "fullName": "Charge air cooler temperature (CACT)",
+    "unit": "°C"
   },
   "7a": {
-    "shortName": 'dpf_b1_delta_pressure',
-    "fullName": 'DPF Bank 1 Delta Pressure',
-    "unit": 'kPa'
+    "shortName": "dpf_b1_delta_pressure",
+    "fullName": "DPF Bank 1 Delta Pressure",
+    "unit": "kPa"
   },
   "7b": {
-    "shortName": 'dpf_b2_delta_pressure',
-    "fullName": 'DPF Bank 2 Delta Pressure',
-    "unit": 'kPa'
+    "shortName": "dpf_b2_delta_pressure",
+    "fullName": "DPF Bank 2 Delta Pressure",
+    "unit": "kPa"
   },
   "7c": {
-    "shortName": 'dpf_b1_inlet_temp',
-    "fullName": 'DPF Bank 1 Inlet Temperature',
-    "unit": '°C'
+    "shortName": "dpf_b1_inlet_temp",
+    "fullName": "DPF Bank 1 Inlet Temperature",
+    "unit": "°C"
   },
   "83": {
-    "shortName": 'nox_pre_scr',
-    "fullName": 'NOx Pre SCR',
-    "unit": 'ppm'
+    "shortName": "nox_pre_scr",
+    "fullName": "NOx Pre SCR",
+    "unit": "ppm"
   },
   "87": {
-    "shortName": 'intake_manifold_abs_pressure_a',
-    "fullName": 'Intake Manifold Abs Pressure A',
-    "unit": 'kPa'
+    "shortName": "intake_manifold_abs_pressure_a",
+    "fullName": "Intake Manifold Abs Pressure A",
+    "unit": "kPa"
   },
   "9a": {
-    "shortName": 'hybrid_ev_batt_voltage',
-    "fullName": 'Hybrid/EV System Battery Voltage',
-    "unit": 'V'
+    "shortName": "hybrid_ev_batt_voltage",
+    "fullName": "Hybrid/EV System Battery Voltage",
+    "unit": "V"
   },
   "a6": {
-    "shortName": 'odometer_ecu',
-    "fullName": 'Odometer (from ECU)',
-    "unit": 'km'
+    "shortName": "odometer_ecu",
+    "fullName": "Odometer (from ECU)",
+    "unit": "km"
   },
   "b2": {
-    "shortName": 'hybrid_ev_batt_soh',
-    "fullName": 'Hybrid/EV Battery State of Health',
-    "unit": '%'
+    "shortName": "hybrid_ev_batt_soh",
+    "fullName": "Hybrid/EV Battery State of Health",
+    "unit": "%"
   },
   "ff122d": {
-    "shortName": 'time_0_60mph',
-    "fullName": '0-60mph Time',
-    "unit": 's'
+    "shortName": "time_0_60mph",
+    "fullName": "0-60mph Time",
+    "unit": "s"
   },
   "ff122e": {
-    "shortName": 'time_0_100kph',
-    "fullName": '0-100kph Time',
-    "unit": 's'
+    "shortName": "time_0_100kph",
+    "fullName": "0-100kph Time",
+    "unit": "s"
   },
   "ff122f": {
-    "shortName": 'time_quarter_mile',
-    "fullName": '1/4 mile time',
-    "unit": 's'
+    "shortName": "time_quarter_mile",
+    "fullName": "1/4 mile time",
+    "unit": "s"
   },
   "ff1230": {
-    "shortName": 'time_eighth_mile',
-    "fullName": '1/8 mile time',
-    "unit": 's'
+    "shortName": "time_eighth_mile",
+    "fullName": "1/8 mile time",
+    "unit": "s"
   },
   "ff124f": {
-    "shortName": 'time_0_200kph',
-    "fullName": '0-200kph Time',
-    "unit": 's'
+    "shortName": "time_0_200kph",
+    "fullName": "0-200kph Time",
+    "unit": "s"
   },
   "ff125e": {
-    "shortName": 'time_60_120mph',
-    "fullName": '60-120mph Time',
-    "unit": 's'
+    "shortName": "time_60_120mph",
+    "fullName": "60-120mph Time",
+    "unit": "s"
   },
   "ff125f": {
-    "shortName": 'time_60_80mph',
-    "fullName": '60-80mph Time',
-    "unit": 's'
+    "shortName": "time_60_80mph",
+    "fullName": "60-80mph Time",
+    "unit": "s"
   },
   "ff1260": {
-    "shortName": 'time_40_60mph',
-    "fullName": '40-60mph Time',
-    "unit": 's'
+    "shortName": "time_40_60mph",
+    "fullName": "40-60mph Time",
+    "unit": "s"
   },
   "ff1261": {
-    "shortName": 'time_80_100mph',
-    "fullName": '80-100mph Time',
-    "unit": 's'
+    "shortName": "time_80_100mph",
+    "fullName": "80-100mph Time",
+    "unit": "s"
   },
   "ff1264": {
-    "shortName": 'time_100_0kph',
-    "fullName": '100-0kph Time',
-    "unit": 's'
+    "shortName": "time_100_0kph",
+    "fullName": "100-0kph Time",
+    "unit": "s"
   },
   "ff1265": {
-    "shortName": 'time_60_0mph',
-    "fullName": '60-0mph Time',
-    "unit": 's'
+    "shortName": "time_60_0mph",
+    "fullName": "60-0mph Time",
+    "unit": "s"
   },
   "ff1275": {
-    "shortName": 'time_80_120kph',
-    "fullName": '80-120kph Time',
-    "unit": 's'
+    "shortName": "time_80_120kph",
+    "fullName": "80-120kph Time",
+    "unit": "s"
   },
   "ff1276": {
-    "shortName": 'time_60_130mph',
-    "fullName": '60-130mph Time',
-    "unit": 's'
+    "shortName": "time_60_130mph",
+    "fullName": "60-130mph Time",
+    "unit": "s"
   },
   "ff1277": {
-    "shortName": 'time_0_30mph',
-    "fullName": '0-30mph Time',
-    "unit": 's'
+    "shortName": "time_0_30mph",
+    "fullName": "0-30mph Time",
+    "unit": "s"
   },
   "ff1278": {
-    "shortName": 'time_0_100mph',
-    "fullName": '0-100mph Time',
-    "unit": 's'
+    "shortName": "time_0_100mph",
+    "fullName": "0-100mph Time",
+    "unit": "s"
   },
   "ff1280": {
-    "shortName": 'time_100_200kph',
-    "fullName": '100-200kph Time',
-    "unit": 's'
+    "shortName": "time_100_200kph",
+    "fullName": "100-200kph Time",
+    "unit": "s"
   },
   "ff1282": {
-    "shortName": 'egt_b1_s2',
-    "fullName": 'Exhaust gas temp Bank 1 Sensor 2',
-    "unit": '°C'
+    "shortName": "egt_b1_s2",
+    "fullName": "Exhaust gas temp Bank 1 Sensor 2",
+    "unit": "°C"
   },
   "ff1283": {
-    "shortName": 'egt_b1_s3',
-    "fullName": 'Exhaust gas temp Bank 1 Sensor 3',
-    "unit": '°C'
+    "shortName": "egt_b1_s3",
+    "fullName": "Exhaust gas temp Bank 1 Sensor 3",
+    "unit": "°C"
   },
   "ff1284": {
-    "shortName": 'egt_b1_s4',
-    "fullName": 'Exhaust gas temp Bank 1 Sensor 4',
-    "unit": '°C'
+    "shortName": "egt_b1_s4",
+    "fullName": "Exhaust gas temp Bank 1 Sensor 4",
+    "unit": "°C"
   },
   "ff1286": {
-    "shortName": 'egt_b2_s2',
-    "fullName": 'Exhaust gas temp Bank 2 Sensor 2',
-    "unit": '°C'
+    "shortName": "egt_b2_s2",
+    "fullName": "Exhaust gas temp Bank 2 Sensor 2",
+    "unit": "°C"
   },
   "ff1287": {
-    "shortName": 'egt_b2_s3',
-    "fullName": 'Exhaust gas temp Bank 2 Sensor 3',
-    "unit": '°C'
+    "shortName": "egt_b2_s3",
+    "fullName": "Exhaust gas temp Bank 2 Sensor 3",
+    "unit": "°C"
   },
   "ff1288": {
-    "shortName": 'egt_b2_s4',
-    "fullName": 'Exhaust gas temp Bank 2 Sensor 4',
-    "unit": '°C'
+    "shortName": "egt_b2_s4",
+    "fullName": "Exhaust gas temp Bank 2 Sensor 4",
+    "unit": "°C"
   },
   "ff128a": {
-    "shortName": 'nox_post_scr',
-    "fullName": 'NOx Post SCR',
-    "unit": 'ppm'
+    "shortName": "nox_post_scr",
+    "fullName": "NOx Post SCR",
+    "unit": "ppm"
   },
   "ff1296": {
-    "shortName": 'pct_city_driving',
-    "fullName": 'Percentage of City driving',
-    "unit": '%'
+    "shortName": "pct_city_driving",
+    "fullName": "Percentage of City driving",
+    "unit": "%"
   },
   "ff1297": {
-    "shortName": 'pct_highway_driving',
-    "fullName": 'Percentage of Highway driving',
-    "unit": '%'
+    "shortName": "pct_highway_driving",
+    "fullName": "Percentage of Highway driving",
+    "unit": "%"
   },
   "ff1298": {
-    "shortName": 'pct_idle_driving',
-    "fullName": 'Percentage of Idle driving',
-    "unit": '%'
+    "shortName": "pct_idle_driving",
+    "fullName": "Percentage of Idle driving",
+    "unit": "%"
   },
   "ff129a": {
-    "shortName": 'android_battery_level',
-    "fullName": 'Android device Battery Level',
-    "unit": '%'
+    "shortName": "android_battery_level",
+    "fullName": "Android device Battery Level",
+    "unit": "%"
   },
   "ff129b": {
-    "shortName": 'dpf_b1_outlet_temp',
-    "fullName": 'DPF Bank 1 Outlet Temperature',
-    "unit": '°C'
+    "shortName": "dpf_b1_outlet_temp",
+    "fullName": "DPF Bank 1 Outlet Temperature",
+    "unit": "°C"
   },
   "ff129c": {
-    "shortName": 'dpf_b2_inlet_temp',
-    "fullName": 'DPF Bank 2 Inlet Temperature',
-    "unit": '°C'
+    "shortName": "dpf_b2_inlet_temp",
+    "fullName": "DPF Bank 2 Inlet Temperature",
+    "unit": "°C"
   },
   "ff129d": {
-    "shortName": 'dpf_b2_outlet_temp',
-    "fullName": 'DPF Bank 2 Outlet Temperature',
-    "unit": '°C'
+    "shortName": "dpf_b2_outlet_temp",
+    "fullName": "DPF Bank 2 Outlet Temperature",
+    "unit": "°C"
   },
   "ff129e": {
-    "shortName": 'maf_sensor_b',
-    "fullName": 'Mass air flow sensor B',
-    "unit": 'g/s'
+    "shortName": "maf_sensor_b",
+    "fullName": "Mass air flow sensor B",
+    "unit": "g/s"
   },
   "ff12a1": {
-    "shortName": 'intake_manifold_abs_pressure_b',
-    "fullName": 'Intake Manifold Abs Pressure B',
-    "unit": 'kPa'
+    "shortName": "intake_manifold_abs_pressure_b",
+    "fullName": "Intake Manifold Abs Pressure B",
+    "unit": "kPa"
   },
   "ff12a4": {
-    "shortName": 'boost_pressure_commanded_b',
-    "fullName": 'Boost Pressure Commanded B',
-    "unit": 'kPa'
+    "shortName": "boost_pressure_commanded_b",
+    "fullName": "Boost Pressure Commanded B",
+    "unit": "kPa"
   },
   "ff12a5": {
-    "shortName": 'boost_pressure_sensor_a',
-    "fullName": 'Boost Pressure Sensor A',
-    "unit": 'kPa'
+    "shortName": "boost_pressure_sensor_a",
+    "fullName": "Boost Pressure Sensor A",
+    "unit": "kPa"
   },
   "ff12a6": {
-    "shortName": 'boost_pressure_sensor_b',
-    "fullName": 'Boost Pressure Sensor B',
-    "unit": 'kPa'
+    "shortName": "boost_pressure_sensor_b",
+    "fullName": "Boost Pressure Sensor B",
+    "unit": "kPa"
   },
   "ff12ab": {
-    "shortName": 'exhaust_pressure_b2',
-    "fullName": 'Exhaust Pressure Bank 2',
-    "unit": 'kPa'
+    "shortName": "exhaust_pressure_b2",
+    "fullName": "Exhaust Pressure Bank 2",
+    "unit": "kPa"
   },
   "ff12b0": {
-    "shortName": 'dpf_b1_inlet_pressure',
-    "fullName": 'DPF Bank 1 Inlet Pressure',
-    "unit": 'kPa'
+    "shortName": "dpf_b1_inlet_pressure",
+    "fullName": "DPF Bank 1 Inlet Pressure",
+    "unit": "kPa"
   },
   "ff12b1": {
-    "shortName": 'dpf_b1_outlet_pressure',
-    "fullName": 'DPF Bank 1 Outlet Pressure',
-    "unit": 'kPa'
+    "shortName": "dpf_b1_outlet_pressure",
+    "fullName": "DPF Bank 1 Outlet Pressure",
+    "unit": "kPa"
   },
   "ff12b2": {
-    "shortName": 'dpf_b2_inlet_pressure',
-    "fullName": 'DPF Bank 2 Inlet Pressure',
-    "unit": 'kPa'
+    "shortName": "dpf_b2_inlet_pressure",
+    "fullName": "DPF Bank 2 Inlet Pressure",
+    "unit": "kPa"
   },
   "ff12b3": {
-    "shortName": 'dpf_b2_outlet_pressure',
-    "fullName": 'DPF Bank 2 Outlet Pressure',
-    "unit": 'kPa'
+    "shortName": "dpf_b2_outlet_pressure",
+    "fullName": "DPF Bank 2 Outlet Pressure",
+    "unit": "kPa"
   },
   "ff12b4": {
-    "shortName": 'hybrid_ev_batt_current',
-    "fullName": 'Hybrid/EV System Battery Current',
-    "unit": 'A'
+    "shortName": "hybrid_ev_batt_current",
+    "fullName": "Hybrid/EV System Battery Current",
+    "unit": "A"
   },
   "ff12b5": {
-    "shortName": 'hybrid_ev_batt_power',
-    "fullName": 'Hybrid/EV System Battery Power',
-    "unit": 'W'
+    "shortName": "hybrid_ev_batt_power",
+    "fullName": "Hybrid/EV System Battery Power",
+    "unit": "W"
   },
   "ff12b6": {
-    "shortName": 'positive_kinetic_energy_pke',
-    "fullName": 'Positive Kinetic Energy (PKE)',
-    "unit": 'km/h^2'
+    "shortName": "positive_kinetic_energy_pke",
+    "fullName": "Positive Kinetic Energy (PKE)",
+    "unit": "km/h^2"
   }
 }

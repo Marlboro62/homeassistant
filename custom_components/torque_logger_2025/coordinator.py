@@ -69,6 +69,18 @@ class TorqueLoggerCoordinator(DataUpdateCoordinator):
         self.cars[car_id] = session_data
         self.async_set_updated_data(session_data)
 
+    # --- Helpers de création ---------------------------------------------------
+
+    @staticmethod
+    def _is_textual_sensor(name: str) -> bool:
+        """Retourne True si le nom ressemble à un capteur textuel pertinent."""
+        if not name:
+            return False
+        n = name.strip().lower()
+        # Autorise quelques cas textuels fréquents (status/état/mode)
+        return n.endswith(("status", "state", "mode")) or "état" in n or "statut" in n
+
+    # --------- Création/MAJ d'entités ----------
     async def add_entities(self, session_data: dict) -> None:
         """Créer les entités manquantes pour une voiture donnée."""
         car_name = session_data["profile"]["Name"]
@@ -88,18 +100,34 @@ class TorqueLoggerCoordinator(DataUpdateCoordinator):
         new_sensors: list[TorqueSensor] = []
         new_trackers: list[TorqueDeviceTracker] = []
 
-        # --- Capteurs ---
-        for key, meta in session_data.get("meta", {}).items():
-            sensor_name = meta.get("name")
-            tracked_key = f"{car_id}:{key}"
+        meta_map = session_data.get("meta", {})
 
+        # --- Capteurs ---
+        for key, meta in meta_map.items():
             # Ne pas créer de capteur pour les coordonnées (réservé au device_tracker)
             if key in (TORQUE_GPS_LAT, TORQUE_GPS_LON):
                 continue
 
-            # Créer même si l'unité est vide
-            if sensor_name and sensor_name != key and tracked_key not in self.tracked:
-                new_sensors.append(TorqueSensor(self, self.entry, key, device))
+            sensor_name = meta.get("name") or key
+            unit = (meta.get("unit") or "").strip()
+            tracked_key = f"{car_id}:{key}"
+
+            # Évite doublons si déjà créé
+            if tracked_key in self.tracked:
+                continue
+
+            # Filtrage "numérique only", sauf si capteur explicitement textuel utile
+            if unit == "" and not self._is_textual_sensor(sensor_name):
+                _LOGGER.debug("Skipping non-numeric sensor without unit: %s (%s)", sensor_name, key)
+                continue
+
+            # Optionnel: ignorer les capteurs sans vrai nom (même valeur que la clé)
+            # Garde si tu veux des entités plus propres; commente si tu préfères tout créer.
+            if sensor_name == key:
+                _LOGGER.debug("Skipping sensor without friendly name (name==key): %s", key)
+                continue
+
+            new_sensors.append(TorqueSensor(self, self.entry, key, device))
 
         # --- Device tracker (GPS lat/lon requis) ---
         if (

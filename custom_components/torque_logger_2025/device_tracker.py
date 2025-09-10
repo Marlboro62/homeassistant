@@ -8,17 +8,15 @@ import logging
 from homeassistant.components.device_tracker.config_entry import TrackerEntity
 from homeassistant.components.device_tracker.const import SourceType as TrackerSourceType
 
-# --- Nettoyage des imports dupliqués ---
-# from homeassistant.const import ATTR_GPS_ACCURACY   # <-- à supprimer
 from homeassistant.const import (
     ATTR_LATITUDE,
     ATTR_LONGITUDE,
     ATTR_GPS_ACCURACY,
 )
-# ---------------------------------------
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+    # noqa
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.restore_state import RestoreEntity
@@ -27,6 +25,8 @@ from homeassistant.helpers import device_registry as dr
 from .entity import TorqueEntity
 from .const import (
     ATTR_ALTITUDE,
+    ATTR_SPEED,
+    ATTR_GPS_TIME,
     DOMAIN,
     ENTITY_GPS,
     GPS_ICON,
@@ -35,11 +35,6 @@ from .const import (
     TORQUE_GPS_LON,
     TORQUE_GPS_ALTITUDE,  # altitude
 )
-
-try:
-    from .const import ENTITY_PICTURE_URL  # type: ignore
-except Exception:
-    ENTITY_PICTURE_URL = "/local/torque/logo.jpg"  # option simple et stable
 
 if TYPE_CHECKING:
     from .coordinator import TorqueLoggerCoordinator
@@ -82,7 +77,7 @@ class TorqueDeviceTracker(TorqueEntity, TrackerEntity, RestoreEntity):
         super().__init__(coordinator, config_entry, ENTITY_GPS, device)
         self._attr_name = self._car_name
         self._attr_icon = GPS_ICON
-        self._attr_entity_picture = ENTITY_PICTURE_URL
+        # Plus d'image personnalisée : on laisse Home Assistant afficher l'icône
         self._restored_state: Optional[Dict[str, Any]] = None
 
     @property
@@ -150,8 +145,10 @@ class TorqueDeviceTracker(TorqueEntity, TrackerEntity, RestoreEntity):
 
     @property
     def extra_state_attributes(self) -> Dict[str, Any] | None:
-        """Expose altitude en attribut supplémentaire."""
+        """Expose altitude, vitesse et horaire GPS en attributs supplémentaires."""
         attrs: Dict[str, Any] = {}
+
+        # Altitude
         alt = self.coordinator.get_value(self._car_id, TORQUE_GPS_ALTITUDE)
         if alt is not None:
             try:
@@ -163,6 +160,33 @@ class TorqueDeviceTracker(TorqueEntity, TrackerEntity, RestoreEntity):
                 attrs[ATTR_ALTITUDE] = float(self._restored_state[ATTR_ALTITUDE])
             except (ValueError, TypeError):
                 pass
+
+        # Vitesse (si disponible côté payload, ex. shortName "speed")
+        spd = self.coordinator.get_value(self._car_id, ATTR_SPEED)
+        if spd is not None:
+            try:
+                attrs[ATTR_SPEED] = float(spd)
+            except (ValueError, TypeError):
+                pass
+        elif self._restored_state and self._restored_state.get(ATTR_SPEED) is not None:
+            try:
+                attrs[ATTR_SPEED] = float(self._restored_state[ATTR_SPEED])
+            except (ValueError, TypeError):
+                pass
+
+        # Horodatage GPS : la vue met "time" au niveau racine → map vers ATTR_GPS_TIME
+        gps_time = self.coordinator.get_value(self._car_id, "time")
+        if gps_time is not None:
+            try:
+                attrs[ATTR_GPS_TIME] = int(gps_time)
+            except (ValueError, TypeError):
+                pass
+        elif self._restored_state and self._restored_state.get(ATTR_GPS_TIME) is not None:
+            try:
+                attrs[ATTR_GPS_TIME] = int(self._restored_state[ATTR_GPS_TIME])
+            except (ValueError, TypeError):
+                pass
+
         return attrs or None
 
     async def async_added_to_hass(self) -> None:
@@ -180,4 +204,6 @@ class TorqueDeviceTracker(TorqueEntity, TrackerEntity, RestoreEntity):
             ATTR_LATITUDE: attr.get(ATTR_LATITUDE),
             ATTR_LONGITUDE: attr.get(ATTR_LONGITUDE),
             ATTR_GPS_ACCURACY: attr.get(ATTR_GPS_ACCURACY),
+            ATTR_SPEED: attr.get(ATTR_SPEED),
+            ATTR_GPS_TIME: attr.get(ATTR_GPS_TIME),
         }
