@@ -1,12 +1,12 @@
 ﻿# 🚗 Torque Logger 2025 — Home Assistant Integration
 
-**Domain:** `torque_logger_2025` · **Version:** `2025.09.5` · **IoT class:** `local_push`
+**Domain:** `torque_logger_2025` · **Version:** `2025.09.10.37` · **IoT class:** `local_push`
 
 <p align="center">
   <img src="docs/icon.png" alt="Torque Logger 2025" width="128">
 </p>
 <p align="center">
-  <a href="https://img.shields.io/badge/version-2025.09.5-blue.svg"><img alt="Version" src="https://img.shields.io/badge/version-2025.09.5-blue.svg"></a>
+  <a href="https://img.shields.io/badge/version-2025.09.10.37-blue.svg"><img alt="Version" src="https://img.shields.io/badge/version-2025.09.10.37-blue.svg"></a>
   <a href="#"><img alt="Home Assistant" src="https://img.shields.io/badge/Home%20Assistant-Custom%20Component-41BDF5.svg"></a>
   <a href="#"><img alt="IoT Class" src="https://img.shields.io/badge/IoT%20class-local__push-8A2BE2.svg"></a>
   <a href="#"><img alt="Language" src="https://img.shields.io/badge/FR%20%2F%20EN-localisation-00A86B.svg"></a>
