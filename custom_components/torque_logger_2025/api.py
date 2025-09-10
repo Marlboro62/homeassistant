@@ -262,19 +262,19 @@ class TorqueReceiveDataView(HomeAssistantView):
             if key.startswith("userUnit"):
                 continue
             if key.startswith("userShortName"):
-                item = key[13:].lower()
+                item = key[13:]
                 self.data[session]["shortName"][item] = value
                 continue
             if key.startswith("userFullName"):
-                item = key[12:].lower()
+                item = key[12:]
                 self.data[session]["fullName"][item] = value
                 continue
             if key.startswith("defaultUnit"):
-                item = key[11:].lower()
+                item = key[11:]
                 self.data[session]["defaultUnit"][item] = value
                 continue
             if key.startswith("k"):
-                item = key[1:].lower()
+                item = key[1:]
                 if len(item) == 1:
                     item = "0" + item
                 self.data[session]["value"][item] = value
