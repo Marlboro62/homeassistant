@@ -30,7 +30,7 @@ It’s simple, fast, and ready for your dashboards. 🔧📈
 - [🧠 Technical Notes](#technical-notes)
 - [🗒️ Changelog](#changelog)
 - [🔐 Security & Best Practices](#security)
-- [📎 Carte & Cards HomeAssistant](#cards)
+- [📎 Cards HomeAssistant](#cards)
 - [🤝 Acknowledgments](#acknowledgments)
 
 ---

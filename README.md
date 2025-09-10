@@ -32,7 +32,7 @@ C’est simple, rapide, et prêt pour vos tableaux de bord de passionné. 🔧�
 - [🧠 Notes techniques](#notes-techniques)
 - [🗒️ Changelog](#changelog)
 - [🔐 Sécurité & bonnes pratiques](#securite)
-- [📎 Carte & Cards HomeAssistant](#carte)
+- [📎 Carte HomeAssistant](#carte)
 - [🤝 Remerciements](#remerciements)
 
 ---
