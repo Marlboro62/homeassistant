@@ -221,8 +221,8 @@ Vous êtes libre d’utiliser, modifier et redistribuer ce projet conformément 
 
 👉 Voir le fichier [LICENSE](./LICENSE) pour plus de détails.
 
-
 ## 🛒 Affiliations
+
 <a id="affiliation"></a>
 Amazon : <a href="https://amzn.to/48bHmPj" target="_blank" rel="noopener noreferrer">OBD2 Bluetooth</a>
 
