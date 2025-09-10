@@ -30,6 +30,7 @@ It’s simple, fast, and ready for your dashboards. 🔧📈
 - [🧠 Technical Notes](#technical-notes)
 - [🗒️ Changelog](#changelog)
 - [🔐 Security & Best Practices](#security)
+- [📎 Carte & Cards HomeAssistant](#cards)
 - [🤝 Acknowledgments](#acknowledgments)
 
 ---
@@ -193,6 +194,14 @@ Adjust the **upload frequency** in Torque to avoid overloading the database
 - **Home Assistant community** & **Torque users**.  
 - **Contributors & testers** who make this project more robust every day. 💙  
 
+<a id="cards"></a>
+## 📎 Carte / Card HomeAssistant
+- **Model / Modele** (https://github.com/Marlboro62/homeassistant/tree/main/docs/images/card/code_card.md). 
+<p align="center">
+  <img src="docs/images/card/card.png" alt="Carte HA" width="1024">
+</p>
+
+<a id="acknowledgments_s"></a>
 ## 🌟 Special Thanks
 
 Thanks to the projects developed by:  

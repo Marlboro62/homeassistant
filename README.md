@@ -32,7 +32,7 @@ C’est simple, rapide, et prêt pour vos tableaux de bord de passionné. 🔧�
 - [🧠 Notes techniques](#notes-techniques)
 - [🗒️ Changelog](#changelog)
 - [🔐 Sécurité & bonnes pratiques](#securite)
-- [📎 Carte & Cards HomeAssistant](#cards)
+- [📎 Carte & Cards HomeAssistant](#carte)
 - [🤝 Remerciements](#remerciements)
 
 ---
@@ -195,7 +195,7 @@ Ajustez la **fréquence d’upload** dans Torque pour éviter de surcharger la b
 - **Communauté Home Assistant** & utilisateurs de **Torque**.  
 - **Contributeurs & testeurs** qui rendent ce projet plus robuste chaque jour. 💙  
 
-<a id="cards"></a>
+<a id="carte"></a>
 ## 📎 Carte / Card HomeAssistant
 - **Modele / Model** (https://github.com/Marlboro62/homeassistant/tree/main/docs/images/card/code_card.md). 
 <p align="center">
