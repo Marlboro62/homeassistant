@@ -61,3 +61,7 @@ Example: Laguna Mikael
 
 > ℹ️ Go to Torque Logger 2025:
 You should see the information you selected in Torque displayed.
+
+<p align="center">
+  <img src="docs/images/profil/Capture%20d'%C3%A9cran%202025-09-10%20155818.png" alt="profil" width="1024">
+</p>
