@@ -197,8 +197,10 @@ Ajustez la **fréquence d’upload** dans Torque pour éviter de surcharger la b
 
 <a id="cards"></a>
 ## 📎 Carte / Card HomeAssistant
-- **Modele / Model** (https://github.com/Marlboro62/homeassistant/tree/main/docs/images/card/code_card.md). 
-
+- **Modele / Model** (https://github.com/Marlboro62/homeassistant/tree/main/docs/images/card/card.png). 
+<p align="center">
+  <img src="docs/images/card/card.png" alt="Carte HA" width="256">
+</p>
 ## 🌟 Remerciements spéciaux
 Merci aux projets développés par :  
 - [@junalmeida](https://github.com/junalmeida/homeassistant-torque)  
