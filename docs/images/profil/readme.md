@@ -63,5 +63,5 @@ Example: Laguna Mikael
 You should see the information you selected in Torque displayed.
 
 <p align="center">
-  <img src="/docs/images/profil/docs/images/profil/Capture d'écran 2025-09-10 155818.png" alt="profil" width="1024">
+  <img src="docs/images/profil/profil.png" alt="profil" width="1024">
 </p>
