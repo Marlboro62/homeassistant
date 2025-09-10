@@ -209,7 +209,7 @@ Merci aux projets développés par :
 - [@DominikWrobel](https://github.com/DominikWrobel/homeassistant-torque)  
 
 <a id="affiliation"></a>
-Amazon : [url=https://amzn.to/48bHmPj]OBD2 Bluetooth[/url]
+Amazon : <a href="https://amzn.to/48bHmPj" target="_blank" rel="noopener noreferrer">OBD2 Bluetooth</a>
 
 ## ☕ Support
 
