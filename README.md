@@ -208,6 +208,20 @@ Merci aux projets développés par :
 - [@junalmeida](https://github.com/junalmeida/homeassistant-torque)  
 - [@DominikWrobel](https://github.com/DominikWrobel/homeassistant-torque)  
 
+## 📜 Licence
+
+Ce projet est distribué sous licence **MIT**.
+
+Il est basé sur les travaux de :  
+- [@junalmeida](https://github.com/junalmeida)  
+- [@DominikWrobel](https://github.com/DominikWrobel)  
+
+Les fichiers de licence originaux sont inclus et respectés.  
+Vous êtes libre d’utiliser, modifier et redistribuer ce projet conformément aux termes de la licence MIT.  
+
+👉 Voir le fichier [LICENSE](./LICENSE) pour plus de détails.
+
+
 ## 🛒 Affiliations
 <a id="affiliation"></a>
 Amazon : <a href="https://amzn.to/48bHmPj" target="_blank" rel="noopener noreferrer">OBD2 Bluetooth</a>
