@@ -46,9 +46,10 @@ Type : module
 
 > ⚠️ If it’s not there, add it manually.
 
+
+
+
 ```bash
-
-
 type: vertical-stack
 cards:
   - type: custom:bar-card
