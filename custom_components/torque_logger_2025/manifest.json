@@ -2,12 +2,13 @@
   "domain": "torque_logger_2025",
   "name": "Torque Logger 2025",
   "version": "2025.09.10.37",
-  "documentation": "https://github.com/Marlboro62/homeassistant#readme",
+  "documentation": "https://github.com/Marlboro62/homeassistant/tree/main/custom_components/torque_logger_2025#readme",
+  "issue_tracker": "https://github.com/Marlboro62/homeassistant/issues",
   "codeowners": ["@Marlboro62"],
   "iot_class": "local_push",
-  "issue_tracker": "https://github.com/Marlboro62/homeassistant/issues",
   "config_flow": true,
   "dependencies": ["http"],
   "requirements": ["pint>=0.24"],
-  "integration_type": "service"
+  "integration_type": "service",
+  "brand": "torque_logger_2025"
 }
