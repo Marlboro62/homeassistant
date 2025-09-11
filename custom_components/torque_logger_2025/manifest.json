@@ -9,6 +9,5 @@
   "config_flow": true,
   "dependencies": ["http"],
   "requirements": ["pint>=0.24"],
-  "integration_type": "service",
-  "brand": "torque_logger_2025"
+  "integration_type": "service"
 }
