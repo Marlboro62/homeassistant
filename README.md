@@ -1,8 +1,7 @@
 # 🚗 [FR] Torque Logger 2025 — Intégration Home Assistant
-# 🚗 [EN] Torque Logger 2025 — Home Assistant Integration  
-👉 [README in English](https://github.com/Marlboro62/homeassistant/blob/main/README.en.md)
+# 🚙 [ [EN] Torque Logger 2025 — Home Assistant Integration ](https://github.com/Marlboro62/homeassistant/blob/main/README.en.md)
 
-**Domaine :** `torque_logger_2025` · **Version :** `2025.09.10.37` · **IoT class :** `local_push`
+**Domaine :** `torque_logger_2025` · **Version :** `2025.09.12.37` · **IoT class :** `local_push`
 
 <p align="center">
   <img src="docs/icon.png" alt="Torque Logger 2025" width="128">
@@ -234,4 +233,5 @@ Si vous aimez ce projet, vous pouvez me soutenir ici :
 <p align="center">
   <a href="#"><img alt="Language" src="https://img.shields.io/badge/FR%20%2F%20EN-localisation-00A86B.svg"></a>
 </p>
+
 
