@@ -1,0 +1,31 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "description": "Torqueアプリとこの統合の設定方法については、ヘルプボタンを参照してください。",
+                "data": {
+                    "email": "メールアドレス",
+                    "imperial": "ヤード・ポンド法に変換"
+                }
+            }
+        },
+        "error": {
+            "email": "Torque Pro に設定されたメールアドレスがありません"
+        },
+        "abort": {
+            "single_instance_allowed": "インスタンスは1つのみ許可されています。"
+        }
+    },
+    "options": {
+        "step": {
+            "user": {
+                "data": {
+                    "binary_sensor": "バイナリセンサー有効",
+                    "device_tracker": "デバイストラッカー有効",
+                    "sensor": "センサー有効",
+                    "switch": "スイッチ有効"
+                }
+            }
+        }
+    }
+}

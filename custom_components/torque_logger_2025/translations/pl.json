@@ -1,0 +1,31 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "description": "Aby uzyskać informacje o tym, jak skonfigurować aplikację Torque i tę integrację, skorzystaj z przycisku pomocy.",
+                "data": {
+                    "email": "E-mail",
+                    "imperial": "Konwertuj na jednostki imperialne"
+                }
+            }
+        },
+        "error": {
+            "email": "Brak skonfigurowanego adresu e-mail w Torque Pro"
+        },
+        "abort": {
+            "single_instance_allowed": "Dozwolona jest tylko jedna instancja."
+        }
+    },
+    "options": {
+        "step": {
+            "user": {
+                "data": {
+                    "binary_sensor": "Czujnik binarny włączony",
+                    "device_tracker": "Śledzenie urządzeń włączone",
+                    "sensor": "Czujnik włączony",
+                    "switch": "Przełącznik włączony"
+                }
+            }
+        }
+    }
+}

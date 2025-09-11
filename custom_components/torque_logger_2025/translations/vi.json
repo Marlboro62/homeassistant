@@ -1,0 +1,31 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "description": "Để biết thông tin về cách thiết lập ứng dụng Torque và tích hợp này, hãy xem nút trợ giúp.",
+                "data": {
+                    "email": "Email",
+                    "imperial": "Chuyển đổi sang đơn vị Imperial"
+                }
+            }
+        },
+        "error": {
+            "email": "Thiếu email đã được cấu hình trong Torque Pro"
+        },
+        "abort": {
+            "single_instance_allowed": "Chỉ cho phép một phiên bản duy nhất."
+        }
+    },
+    "options": {
+        "step": {
+            "user": {
+                "data": {
+                    "binary_sensor": "Cảm biến nhị phân đã bật",
+                    "device_tracker": "Trình theo dõi thiết bị đã bật",
+                    "sensor": "Cảm biến đã bật",
+                    "switch": "Công tắc đã bật"
+                }
+            }
+        }
+    }
+}

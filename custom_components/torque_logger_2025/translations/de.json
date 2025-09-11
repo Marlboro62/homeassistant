@@ -1,0 +1,31 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "description": "Weitere Informationen zur Einrichtung der Torque App und dieser Integration finden Sie über die Hilfe-Schaltfläche.",
+                "data": {
+                    "email": "E-Mail",
+                    "imperial": "In imperiale Einheiten umrechnen"
+                }
+            }
+        },
+        "error": {
+            "email": "Fehlende E-Mail in Torque Pro konfiguriert"
+        },
+        "abort": {
+            "single_instance_allowed": "Nur eine einzelne Instanz ist erlaubt."
+        }
+    },
+    "options": {
+        "step": {
+            "user": {
+                "data": {
+                    "binary_sensor": "Binärsensor aktiviert",
+                    "device_tracker": "Geräte-Tracker aktiviert",
+                    "sensor": "Sensor aktiviert",
+                    "switch": "Schalter aktiviert"
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,31 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "description": "有关如何设置 Torque 应用和此集成的信息，请查看帮助按钮。",
+                "data": {
+                    "email": "电子邮件",
+                    "imperial": "转换为英制单位"
+                }
+            }
+        },
+        "error": {
+            "email": "Torque Pro 中缺少已配置的电子邮件"
+        },
+        "abort": {
+            "single_instance_allowed": "只允许一个实例。"
+        }
+    },
+    "options": {
+        "step": {
+            "user": {
+                "data": {
+                    "binary_sensor": "二进制传感器已启用",
+                    "device_tracker": "设备跟踪器已启用",
+                    "sensor": "传感器已启用",
+                    "switch": "开关已启用"
+                }
+            }
+        }
+    }
+}

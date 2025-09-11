@@ -1,0 +1,31 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "description": "Para informações sobre como configurar o aplicativo Torque e esta integração, consulte o botão de ajuda.",
+                "data": {
+                    "email": "E-mail",
+                    "imperial": "Converter para unidades imperiais"
+                }
+            }
+        },
+        "error": {
+            "email": "E-mail ausente configurado no Torque Pro"
+        },
+        "abort": {
+            "single_instance_allowed": "Apenas uma única instância é permitida."
+        }
+    },
+    "options": {
+        "step": {
+            "user": {
+                "data": {
+                    "binary_sensor": "Sensor binário habilitado",
+                    "device_tracker": "Rastreador de dispositivos habilitado",
+                    "sensor": "Sensor habilitado",
+                    "switch": "Interruptor habilitado"
+                }
+            }
+        }
+    }
+}

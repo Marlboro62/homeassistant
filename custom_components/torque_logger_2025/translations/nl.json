@@ -1,0 +1,62 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "description": "Voor informatie over hoe je de Torque-app en deze integratie instelt, klik op de helpknop.",
+                "data": {
+                    "email": "E-mail",
+                    "imperial": "Omzetten naar imperiale eenheden"
+                }
+            }
+        },
+        "error": {
+            "email": "E-mail ontbreekt die is geconfigureerd in Torque Pro"
+        },
+        "abort": {
+            "single_instance_allowed": "Er is slechts één instantie toegestaan."
+        }
+    },
+    "options": {
+        "step": {
+            "user": {
+                "data": {
+                    "binary_sensor": "Binaire sensor ingeschakeld",
+                    "device_tracker": "Apparaattracker ingeschakeld",
+                    "sensor": "Sensor ingeschakeld",
+                    "switch": "Schakelaar ingeschakeld"
+                }
+            }
+        }
+    }
+}
+{
+    "config": {
+        "step": {
+            "user": {
+                "description": "Voor informatie over hoe je de Torque-app en deze integratie instelt, klik op de helpknop.",
+                "data": {
+                    "email": "E-mail",
+                    "imperial": "Omzetten naar imperiale eenheden"
+                }
+            }
+        },
+        "error": {
+            "email": "E-mail ontbreekt die is geconfigureerd in Torque Pro"
+        },
+        "abort": {
+            "single_instance_allowed": "Er is slechts één instantie toegestaan."
+        }
+    },
+    "options": {
+        "step": {
+            "user": {
+                "data": {
+                    "binary_sensor": "Binaire sensor ingeschakeld",
+                    "device_tracker": "Apparaattracker ingeschakeld",
+                    "sensor": "Sensor ingeschakeld",
+                    "switch": "Schakelaar ingeschakeld"
+                }
+            }
+        }
+    }
+}

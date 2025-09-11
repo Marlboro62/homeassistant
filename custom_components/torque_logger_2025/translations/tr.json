@@ -1,0 +1,31 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "description": "Torque uygulamasını ve bu entegrasyonu nasıl kuracağınız hakkında bilgi için yardım düğmesine bakın.",
+                "data": {
+                    "email": "E-posta",
+                    "imperial": "İmparatorluk birimlerine dönüştür"
+                }
+            }
+        },
+        "error": {
+            "email": "Torque Pro’da yapılandırılmış e-posta eksik"
+        },
+        "abort": {
+            "single_instance_allowed": "Yalnızca tek bir örneğe izin verilir."
+        }
+    },
+    "options": {
+        "step": {
+            "user": {
+                "data": {
+                    "binary_sensor": "İkili sensör etkin",
+                    "device_tracker": "Cihaz izleyici etkin",
+                    "sensor": "Sensör etkin",
+                    "switch": "Anahtar etkin"
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,31 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "description": "Torque 앱과 이 통합을 설정하는 방법에 대한 정보는 도움말 버튼을 확인하세요.",
+                "data": {
+                    "email": "이메일",
+                    "imperial": "영국식 단위로 변환"
+                }
+            }
+        },
+        "error": {
+            "email": "Torque Pro에 구성된 이메일이 없습니다"
+        },
+        "abort": {
+            "single_instance_allowed": "하나의 인스턴스만 허용됩니다."
+        }
+    },
+    "options": {
+        "step": {
+            "user": {
+                "data": {
+                    "binary_sensor": "이진 센서 활성화됨",
+                    "device_tracker": "디바이스 추적기 활성화됨",
+                    "sensor": "센서 활성화됨",
+                    "switch": "스위치 활성화됨"
+                }
+            }
+        }
+    }
+}

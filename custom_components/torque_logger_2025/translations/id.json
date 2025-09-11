@@ -1,0 +1,31 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "description": "Untuk informasi tentang cara mengatur aplikasi Torque dan integrasi ini, periksa tombol bantuan.",
+                "data": {
+                    "email": "Email",
+                    "imperial": "Konversi ke satuan imperial"
+                }
+            }
+        },
+        "error": {
+            "email": "Email yang dikonfigurasi di Torque Pro tidak ditemukan"
+        },
+        "abort": {
+            "single_instance_allowed": "Hanya satu instance yang diizinkan."
+        }
+    },
+    "options": {
+        "step": {
+            "user": {
+                "data": {
+                    "binary_sensor": "Sensor biner diaktifkan",
+                    "device_tracker": "Pelacak perangkat diaktifkan",
+                    "sensor": "Sensor diaktifkan",
+                    "switch": "Saklar diaktifkan"
+                }
+            }
+        }
+    }
+}
