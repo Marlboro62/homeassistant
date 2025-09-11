@@ -34,7 +34,7 @@ prettyPint = {
     "foot": "ft",
 }
 
-# --- Libellés localisés (extensible) ---
+# --- Libellés localisés (par libellé complet) ---
 LABELS = {
     "fr": {
         "engine load": "Charge moteur",
@@ -167,7 +167,7 @@ LABELS = {
         "voltage (obd adapter)": "Tension (adaptateur OBD)",
         "volumetric efficiency (calculated)": "Rendement volumétrique (calc.)",
 
-        # Variantes vues dans Torque
+        # Variantes courantes vues dans Torque
         "average trip speed whilst moving only": "Vit. moy. traj. (mouv.)",
         "average trip speed whilst stopped or moving": "Vit. moy. traj. (arrêt+mouv.)",
         "cost per milekm (instant)": "Coût par km/mile (inst.)",
@@ -181,29 +181,39 @@ LABELS = {
         "percentage of idle driving": "Part au ralenti",
         "positive kinetic energy (pke)": "Énergie cinétique positive (PKE)",
 
-        # Chronos
+        # Chronos (deux formes : "X-Y time" et "time X Y")
         "0-60mph time": "0–60 mph (temps)",
         "time 0 60mph": "0–60 mph (temps)",
         "0 60mph time": "0–60 mph (temps)",
+
         "0-100kph time": "0–100 km/h (temps)",
         "time 0 100kph": "0–100 km/h (temps)",
         "0 100kph time": "0–100 km/h (temps)",
+
         "40-60mph time": "40–60 mph (temps)",
         "time 40 60mph": "40–60 mph (temps)",
+
         "60-0mph time": "60–0 mph (temps)",
         "time 60 0mph": "60–0 mph (temps)",
+
         "60-80mph time": "60–80 mph (temps)",
         "time 60 80mph": "60–80 mph (temps)",
+
         "60-120mph time": "60–120 mph (temps)",
         "time 60 120mph": "60–120 mph (temps)",
+
         "60-130mph time": "60–130 mph (temps)",
         "time 60 130mph": "60–130 mph (temps)",
+
         "80-120kph time": "80–120 km/h (temps)",
         "time 80 120kph": "80–120 km/h (temps)",
+
         "100-0kph time": "100–0 km/h (temps)",
         "time 100 0kph": "100–0 km/h (temps)",
+
         "100-200kph time": "100–200 km/h (temps)",
         "time 100 200kph": "100–200 km/h (temps)",
+
         "1/8 mile time": "1/8 mile (temps)",
         "time eighth mile": "1/8 mile (temps)",
         "1/4 mile time": "1/4 mile (temps)",
@@ -211,40 +221,68 @@ LABELS = {
     }
 }
 
-# Overrides manuels par *clé* (shortName slugifié) si nécessaire
+# --- Overrides par *clé* (shortName slugifié) ---
 FR_BY_KEY: dict[str, str] = {
-    "vit_moy_traj_mouv": "Vitesse moy. trajet (mouv.)",
-    "vit_moy_traj_arret_mouv": "Vitesse moy. trajet (arrêt + mouvement)",
-
-    # Séparation claire des 2 capteurs de cap GPS
+    # GPS bearing (2 capteurs qui coexistent)
     "gps_bearing": "Cap GPS",
     "gps_bearing_legacy_ff1007": "Cap GPS (legacy)",
 
+    # Coûts / CO2
     "co2_g_km_moy": "CO₂ g/km (moy.)",
     "co2_g_km_inst": "CO₂ g/km (inst.)",
     "cout_par_km_mile_inst": "Coût par km/mile (inst.)",
     "cout_par_km_mile_trajet": "Coût par km/mile (trajet)",
-    "puissance_kw_roues": "Puissance kW (roues)",
-    "puissance_roues": "Puissance (roues)",
-    "couple": "Couple",
-    "energie_cinetique_positive_pke": "Énergie cinétique positive (PKE)",
-    "trip_average_l_100km": "L/100 km (moy. trajet)",
+
+    # PKE + pourcentages (versions Pct*)
+    "positive_kinetic_energy_pke": "Énergie cinétique positive (PKE)",
+    "pct_city_driving": "Part conduite urbaine",
+    "pct_highway_driving": "Part conduite autoroute",
+    "pct_idle_driving": "Part au ralenti",
+
+    # Puissance / Couple (versions shortName anglais)
+    "engine_kw_at_the_wheels": "Puissance kW (roues)",
+    "horsepower_at_the_wheels": "Puissance (roues)",
+    "torque": "Couple",
+
+    # Rendement volumétrique (2 variantes)
+    "volumetric_efficiency_calculated": "Rendement volumétrique (calculé)",
+    "rendement_volumetrique_calc": "Rendement volumétrique (calculé)",
+
+    # Vitesses moyennes (versions FR de shortName)
+    "vit_moy_traj_mouv": "Vitesse moy. trajet (mouv.)",
+    "vit_moy_traj_arret_mouv": "Vitesse moy. trajet (arrêt + mouvement)",
+
+    # Carburant / distance / vitesse (shortName FR)
     "distance_du_trajet": "Distance du trajet",
     "vitesse_du_vehicule": "Vitesse du véhicule",
     "vitesse_du_vehicule_gps": "Vitesse (GPS)",
 
-    # Chronos si tes shortName FR sont identiques au slug par défaut :
+    # Chronos – couvrir *_time et time_* + formats numériques
     "0_60mph_time": "0–60 mph (temps)",
+    "time_0_60mph": "0–60 mph (temps)",
     "0_100kph_time": "0–100 km/h (temps)",
+    "time_0_100kph": "0–100 km/h (temps)",
     "40_60mph_time": "40–60 mph (temps)",
+    "time_40_60mph": "40–60 mph (temps)",
     "60_0mph_time": "60–0 mph (temps)",
+    "time_60_0mph": "60–0 mph (temps)",
     "60_80mph_time": "60–80 mph (temps)",
+    "time_60_80mph": "60–80 mph (temps)",
     "60_120mph_time": "60–120 mph (temps)",
+    "time_60_120mph": "60–120 mph (temps)",
     "60_130mph_time": "60–130 mph (temps)",
+    "time_60_130mph": "60–130 mph (temps)",
     "80_120kph_time": "80–120 km/h (temps)",
+    "time_80_120kph": "80–120 km/h (temps)",
     "100_0kph_time": "100–0 km/h (temps)",
+    "time_100_0kph": "100–0 km/h (temps)",
     "100_200kph_time": "100–200 km/h (temps)",
+    "time_100_200kph": "100–200 km/h (temps)",
+    "1_8_mile_time": "1/8 mile (temps)",
+    "eighth_mile_time": "1/8 mile (temps)",
     "time_eighth_mile": "1/8 mile (temps)",
+    "1_4_mile_time": "1/4 mile (temps)",
+    "quarter_mile_time": "1/4 mile (temps)",
     "time_quarter_mile": "1/4 mile (temps)",
 }
 
@@ -428,13 +466,11 @@ class TorqueReceiveDataView(HomeAssistantView):
         if key in ("ff1007", "ff123b"):
             if key == "ff1007":
                 short_key = "gps_bearing_legacy_ff1007"
-                # nom par défaut si rien n'existe
                 name = name or "GPS Bearing (legacy)"
             else:
                 short_key = "gps_bearing"
                 name = name or "GPS Bearing"
-
-            # Certaines versions de Torque n’envoient pas l’unité → on force le °
+            # Forcer l'unité si absente
             if not unit:
                 unit = "°"
 

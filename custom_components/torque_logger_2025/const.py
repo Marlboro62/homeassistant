@@ -124,35 +124,25 @@ TORQUE_CODES: Final = {
     "unit": "km/h"
   },
   "ff1007": {
-    "shortName": "gps_bearing",  # alias de ff123b
-    "fullName": "GPS Bearing (legacy ff1007)",
+    "shortName": "gps_brng",
+    "fullName": "GPS Bearing",
     "unit": "°"
   },
-  "ff1005": {
-    "shortName": TORQUE_GPS_LON,
-    "fullName": "GPS Longitude",
-    "unit": "°"
-  }, 
-  "ff1006": {
-    "shortName": TORQUE_GPS_LAT,
-    "fullName": "GPS Latitude",
-    "unit": "°"
-  },  
+  "ff123a": {
+    "shortName": "gps_sat",
+    "fullName": "GPS Satellites",
+    "unit": "count"
+  },
   "ff1010": {
     "shortName": TORQUE_GPS_ALTITUDE,
     "fullName": "GPS Altitude",
     "unit": "m"
   },
-  "ff123a": {
-    "shortName": "gps_sat",
-    "fullName": "GPS Satellites",
-    "unit": None
-  },
-  "ff123b": {
-    "shortName": "gps_bearing",
-    "fullName": "GPS Bearing",
+  "ff1006": {
+    "shortName": TORQUE_GPS_LAT,
+    "fullName": "GPS Latitude",
     "unit": "°"
-  },  
+  },
   "ff1239": {
     "shortName": TORQUE_GPS_ACCURACY,
     "fullName": "GPS Accuracy",
@@ -168,7 +158,11 @@ TORQUE_CODES: Final = {
     "fullName": "Fuel used (trip)",
     "unit": "L"
   },
-
+  "ff1005": {
+    "shortName": TORQUE_GPS_LON,
+    "fullName": "GPS Longitude",
+    "unit": "°"
+  },
   "47": {
     "shortName": "absolute_throttle_position_b",
     "fullName": "Absolute Throttle Position B",
@@ -443,6 +437,11 @@ TORQUE_CODES: Final = {
     "shortName": "fuel_trim_bank_2_short_term",
     "fullName": "Fuel Trim Bank 2 Short Term",
     "unit": "%"
+  },
+  "ff123b": {
+    "shortName": "gps_bearing",
+    "fullName": "GPS Bearing",
+    "unit": "°"
   },
   "ff1226": {
     "shortName": "horsepower_at_the_wheels",
