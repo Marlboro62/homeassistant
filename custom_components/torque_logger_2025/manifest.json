@@ -1,7 +1,7 @@
 {
   "domain": "torque_logger_2025",
   "name": "Torque Logger 2025",
-  "version": "2025.09.10.37",
+  "version": "2025.09.11.37",
   "documentation": "https://github.com/Marlboro62/homeassistant/tree/main/custom_components/torque_logger_2025#readme",
   "issue_tracker": "https://github.com/Marlboro62/homeassistant/issues",
   "codeowners": ["@Marlboro62"],
