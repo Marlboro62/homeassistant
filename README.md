@@ -1,4 +1,4 @@
-# 🚗 [FR] Torque Logger 2025 — Intégration Home Assistant
+# <img src="https://flagcdn.com/mf.svg" width="32"/> [ [FR] Torque Logger 2025 — Intégration Home Assistant ](https://github.com/Marlboro62/homeassistant/blob/main/README.md)
 # <img src="https://flagcdn.com/gb.svg" width="32"/> [ [EN] Torque Logger 2025 — Home Assistant Integration ](https://github.com/Marlboro62/homeassistant/blob/main/README.en.md)
 
 
@@ -235,6 +235,7 @@ Si vous aimez ce projet, vous pouvez me soutenir ici :
 <p align="center">
   <a href="#"><img alt="Language" src="https://img.shields.io/badge/FR%20%2F%20EN-localisation-00A86B.svg"></a>
 </p>
+
 
 
 
