@@ -10,5 +10,5 @@
   "dependencies": ["http"],
   "requirements": ["pint>=0.24"],
   "integration_type": "service",
-  "brand": "homeassistant"
+  "brand": "torque_logger_2025"
 }
