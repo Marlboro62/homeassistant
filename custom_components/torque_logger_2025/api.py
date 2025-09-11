@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Torque Logger API Client/DataView."""
+"""Torque Logger 2025 API Client/DataView."""
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Optional
@@ -166,92 +166,74 @@ LABELS = {
         "voltage (control module)": "Tension (module de contrôle)",
         "voltage (obd adapter)": "Tension (adaptateur OBD)",
         "volumetric efficiency (calculated)": "Rendement volumétrique (calc.)",
-        # Vitesses moyennes (variante sans parenthèses)
+
+        # Variantes vues dans Torque
         "average trip speed whilst moving only": "Vit. moy. traj. (mouv.)",
         "average trip speed whilst stopped or moving": "Vit. moy. traj. (arrêt+mouv.)",
-
-        # Coûts / CO2 (variantes)
         "cost per milekm (instant)": "Coût par km/mile (inst.)",
         "cost per milekm (trip)": "Coût par km/mile (trajet)",
         "co2 in gkm (average)": "CO₂ g/km (moy.)",
         "co2 in gkm (instantaneous)": "CO₂ g/km (inst.)",
-
-        # Puissance (variantes casse/ponctuation)
         "engine kw at the wheels": "Puissance kW (roues)",
         "horsepower at the wheels": "Puissance (roues)",
-
-        # Pourcentages de conduite
         "percentage of city driving": "Part conduite urbaine",
         "percentage of highway driving": "Part conduite autoroute",
         "percentage of idle driving": "Part au ralenti",
-
-        # PKE
         "positive kinetic energy (pke)": "Énergie cinétique positive (PKE)",
 
-        # Chronos (toutes variantes utiles)
+        # Chronos
         "0-60mph time": "0–60 mph (temps)",
         "time 0 60mph": "0–60 mph (temps)",
         "0 60mph time": "0–60 mph (temps)",
-
         "0-100kph time": "0–100 km/h (temps)",
         "time 0 100kph": "0–100 km/h (temps)",
         "0 100kph time": "0–100 km/h (temps)",
-
         "40-60mph time": "40–60 mph (temps)",
         "time 40 60mph": "40–60 mph (temps)",
-
         "60-0mph time": "60–0 mph (temps)",
         "time 60 0mph": "60–0 mph (temps)",
-
         "60-80mph time": "60–80 mph (temps)",
         "time 60 80mph": "60–80 mph (temps)",
-
         "60-120mph time": "60–120 mph (temps)",
         "time 60 120mph": "60–120 mph (temps)",
-
         "60-130mph time": "60–130 mph (temps)",
         "time 60 130mph": "60–130 mph (temps)",
-
         "80-120kph time": "80–120 km/h (temps)",
         "time 80 120kph": "80–120 km/h (temps)",
-
         "100-0kph time": "100–0 km/h (temps)",
         "time 100 0kph": "100–0 km/h (temps)",
-
         "100-200kph time": "100–200 km/h (temps)",
         "time 100 200kph": "100–200 km/h (temps)",
-
         "1/8 mile time": "1/8 mile (temps)",
         "time eighth mile": "1/8 mile (temps)",
-
         "1/4 mile time": "1/4 mile (temps)",
-        "time quarter mile": "1/4 mile (temps)",        
+        "time quarter mile": "1/4 mile (temps)",
     }
 }
 
-# Optionnel : overrides manuels par *clé* (si certaines traductions sont spécifiques)
+# Overrides manuels par *clé* (shortName slugifié) si nécessaire
 FR_BY_KEY: dict[str, str] = {
     "vit_moy_traj_mouv": "Vitesse moy. trajet (mouv.)",
     "vit_moy_traj_arret_mouv": "Vitesse moy. trajet (arrêt + mouvement)",
-    "cap_gps": "Cap GPS",
-    "gps_bearing_legacy_ff1007": "Cap GPS",
+
+    # Séparation claire des 2 capteurs de cap GPS
+    "gps_bearing": "Cap GPS",
+    "gps_bearing_legacy_ff1007": "Cap GPS (legacy)",
 
     "co2_g_km_moy": "CO₂ g/km (moy.)",
     "co2_g_km_inst": "CO₂ g/km (inst.)",
     "cout_par_km_mile_inst": "Coût par km/mile (inst.)",
     "cout_par_km_mile_trajet": "Coût par km/mile (trajet)",
-
     "puissance_kw_roues": "Puissance kW (roues)",
     "puissance_roues": "Puissance (roues)",
     "couple": "Couple",
     "energie_cinetique_positive_pke": "Énergie cinétique positive (PKE)",
-
     "trip_average_l_100km": "L/100 km (moy. trajet)",
     "distance_du_trajet": "Distance du trajet",
     "vitesse_du_vehicule": "Vitesse du véhicule",
     "vitesse_du_vehicule_gps": "Vitesse (GPS)",
 
-    # Chronos si jamais tes shortName FR sont identiques au slug par défaut :
+    # Chronos si tes shortName FR sont identiques au slug par défaut :
     "0_60mph_time": "0–60 mph (temps)",
     "0_100kph_time": "0–100 km/h (temps)",
     "40_60mph_time": "40–60 mph (temps)",
@@ -440,16 +422,22 @@ class TorqueReceiveDataView(HomeAssistantView):
         # Clé normalisée pour l’ID & la localisation par clé
         short_key = slugify(str(short_name_raw))  # ex: "engine_rpm"
 
+        # Harmonisation des capteurs 'Cap GPS'
+        # - ff123b => capteur principal (short_key = "gps_bearing")
+        # - ff1007 => capteur legacy (short_key = "gps_bearing_legacy_ff1007")
         if key in ("ff1007", "ff123b"):
             if key == "ff1007":
                 short_key = "gps_bearing_legacy_ff1007"
-                if self.lang == "fr":
-                    name = "Cap GPS (legacy)"
-                else:
-                    name = "GPS Bearing (legacy)"
+                # nom par défaut si rien n'existe
+                name = name or "GPS Bearing (legacy)"
             else:
                 short_key = "gps_bearing"
-        
+                name = name or "GPS Bearing"
+
+            # Certaines versions de Torque n’envoient pas l’unité → on force le °
+            if not unit:
+                unit = "°"
+
         # Localisation: priorité clé statique -> clé auto -> libellé
         if self.lang == "fr":
             name = FR_BY_KEY.get(short_key) or FR_BY_KEY_AUTO.get(short_key) or _localize("fr", name)
