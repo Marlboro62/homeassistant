@@ -1,5 +1,7 @@
 {
-    "name": "🚗 Torque Logger 2025"
-    "content_in_root":  false,
-    "render_readme":  true
+  "name": "🚗 Torque Logger 2025",
+  "domains": ["torque_logger_2025"],
+  "country": ["*"],  
+  "render_readme": true
 }
+
