@@ -4,8 +4,10 @@
 **Domaine :** `torque_logger_2025` · **Version :** `2025.09.12.37` · **IoT class :** `local_push`
 
 <p align="center">
-  <img src="docs/icon.png" alt="Torque Logger 2025" width="128">
+  <img src="https://raw.githubusercontent.com/Marlboro62/homeassistant/main/docs/images/tools/eml327mini.png" alt="ELM327 Mini" width="140" style="margin:0 8px;"> + 
+  <img src="docs/icon.png" alt="Torque Logger 2025" width="128" style="margin:0 8px;"> = Torque Logger 2025
 </p>
+
 <p align="center">
   <a href="https://img.shields.io/badge/version-2025.09.10.37-blue.svg"><img alt="Version" src="https://img.shields.io/badge/version-2025.09.10.37-blue.svg"></a>
   <a href="#"><img alt="Home Assistant" src="https://img.shields.io/badge/Home%20Assistant-Custom%20Component-41BDF5.svg"></a>
