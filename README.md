@@ -3,9 +3,8 @@
 
 **Domaine :** `torque_logger_2025` · **Version :** `2025.09.12.37` · **IoT class :** `local_push`
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/Marlboro62/homeassistant/main/docs/images/tools/eml327mini.png" alt="ELM327 Mini" width="140" style="margin:0 8px;"> + 
-  <img src="docs/icon.png" alt="Torque Logger 2025" width="128" style="margin:0 8px;"> = Torque Logger 2025
+<p align="center">  
+  <img src="docs/images/torque_logger_2025.png" alt="Torque Logger 2025" width="256" style="margin:0 8px;">
 </p>
 
 <p align="center">
