@@ -4,7 +4,7 @@
 **Domaine :** `torque_logger_2025` · **Version :** `2025.09.1` · **IoT class :** `local_push`
 
 <p align="center">  
-  <img src="docs/images/torque_logger_2025.png" alt="Torque Logger 2025" width="256" style="margin:0 8px;">
+  <img src="docs/assets/torque_logger_2025_256x256.png" alt="Torque Logger 2025" width="256" style="margin:0 8px;">
 </p>
 
 <p align="center">
