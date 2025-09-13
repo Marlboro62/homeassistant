@@ -165,7 +165,7 @@ LABELS = {
         "turbo boost & vacuum gauge": "Boost & dépression turbo",
         "voltage (control module)": "Tension (module de contrôle)",
         "voltage (obd adapter)": "Tension (adaptateur OBD)",
-        "volumetric efficiency (calculated)": "Rendement volumétrique (calc.)",
+        "volumetric efficiency calculated": "Rendement volumétrique (calc.)",
 
         # Variantes courantes vues dans Torque
         "average trip speed whilst moving only": "Vit. moy. traj. (mouv.)",

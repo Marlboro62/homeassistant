@@ -18,7 +18,7 @@ from .const import (
     CONF_IMPERIAL,
     CONF_LANGUAGE,
     DEFAULT_LANGUAGE,
-    SUPPORTED_LANGS,  # {"en": "English", "fr": "Français"}
+    SUPPORTED_LANGS,   
 )
 
 

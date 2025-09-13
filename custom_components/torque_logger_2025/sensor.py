@@ -142,6 +142,7 @@ FR_BY_KEY: dict[str, str] = {
     "throttle_pos": "Position papillon",
     "mass_air_flow_rate": "Débit massique d’air",
     "intake_manifold_pressure": "Pression collecteur d’admission",
+    "volumetric_efficiency_calculated": "Rendement volumétrique (calculé)",
 
     # Capteurs O2 / trims
     "o2_volts_bank_1_sensor_1": "Tension O₂ banc 1 sonde 1",
@@ -208,8 +209,8 @@ FR_BY_KEY: dict[str, str] = {
     "trip_distance": "Distance du trajet",
 
     # Boost
-    "turbo_boost_vacuum_gauge": "Boost & dépression turbo",
-    "turbo_boost_&_vacuum_gauge": "Boost & dépression turbo",
+    "turbo_boost_vacuum_gauge": "Boost & Dépression Turbo",
+    "turbo_boost_&_vacuum_gauge": "Boost & Dépression Turbo",
 
     # Divers
     "voltage_obd_adapter": "Tension (adaptateur OBD)",
