@@ -1,31 +1,27 @@
 {
-    "config": {
-        "step": {
-            "user": {
-                "description": "Untuk informasi tentang cara mengatur aplikasi Torque dan integrasi ini, periksa tombol bantuan.",
-                "data": {
-                    "email": "Email",
-                    "imperial": "Konversi ke satuan imperial"
-                }
-            }
-        },
-        "error": {
-            "email": "Email yang dikonfigurasi di Torque Pro tidak ditemukan"
-        },
-        "abort": {
-            "single_instance_allowed": "Hanya satu instance yang diizinkan."
+  "config": {
+    "step": {
+      "user": {
+        "title": "Torque Logger 2025",
+        "description": "Masukkan email yang digunakan di Torque.",
+        "data": {
+          "email": "Email Torque yang akan diterima",
+          "imperial": "Konversi ke satuan imperial",
+          "language": "Bahasa bawaan"
         }
-    },
-    "options": {
-        "step": {
-            "user": {
-                "data": {
-                    "binary_sensor": "Sensor biner diaktifkan",
-                    "device_tracker": "Pelacak perangkat diaktifkan",
-                    "sensor": "Sensor diaktifkan",
-                    "switch": "Saklar diaktifkan"
-                }
-            }
-        }
+      }
     }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Torque Logger 2025 – Opsi",
+        "description": "🛰️ Endpoint:\n/api/torque_logger_2025\n\n🧪 Contoh:\nsession=[ID]&eml=[email]&kff1006=48.85&kff1005=2.35\n\n💡 Tips:\ntambahkan &lang=fr|en untuk memaksa bahasa.",
+        "data": {
+          "imperial": "Konversi ke satuan imperial",
+          "language": "Bahasa bawaan"
+        }
+      }
+    }
+  }
 }

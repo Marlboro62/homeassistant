@@ -1,0 +1,27 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Torque Logger 2025",
+        "description": "Ange den e-postadress som används i Torque.",
+        "data": {
+          "email": "Torque-e-postadress som ska accepteras",
+          "imperial": "Konvertera till imperiska enheter",
+          "language": "Standardspråk"
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Torque Logger 2025 – Alternativ",
+        "description": "🛰️ Slutpunkt:\n/api/torque_logger_2025\n\n🧪 Exempel:\nsession=[ID]&eml=[email]&kff1006=48.85&kff1005=2.35\n\n💡 Tips:\nlägg till &lang=fr|en för att tvinga språket.",
+        "data": {
+          "imperial": "Konvertera till imperiska enheter",
+          "language": "Standardspråk"
+        }
+      }
+    }
+  }
+}

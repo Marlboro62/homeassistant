@@ -1,31 +1,27 @@
 {
-    "config": {
-        "step": {
-            "user": {
-                "description": "Per informazioni su come configurare l'app Torque e questa integrazione, consulta il pulsante di aiuto.",
-                "data": {
-                    "email": "Email",
-                    "imperial": "Converti in unità imperiali"
-                }
-            }
-        },
-        "error": {
-            "email": "Email mancante configurata in Torque Pro"
-        },
-        "abort": {
-            "single_instance_allowed": "È consentita solo un'istanza singola."
+  "config": {
+    "step": {
+      "user": {
+        "title": "Torque Logger 2025",
+        "description": "Inserisci l'indirizzo email usato in Torque.",
+        "data": {
+          "email": "Email di Torque da accettare",
+          "imperial": "Converti in unità imperiali",
+          "language": "Lingua predefinita"
         }
-    },
-    "options": {
-        "step": {
-            "user": {
-                "data": {
-                    "binary_sensor": "Sensore binario abilitato",
-                    "device_tracker": "Tracker dispositivo abilitato",
-                    "sensor": "Sensore abilitato",
-                    "switch": "Interruttore abilitato"
-                }
-            }
-        }
+      }
     }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Torque Logger 2025 – Opzioni",
+        "description": "🛰️ Endpoint:\n/api/torque_logger_2025\n\n🧪 Esempio:\nsession=[ID]&eml=[email]&kff1006=48.85&kff1005=2.35\n\n💡 Suggerimento:\naggiungi &lang=fr|en per forzare la lingua.",
+        "data": {
+          "imperial": "Converti in unità imperiali",
+          "language": "Lingua predefinita"
+        }
+      }
+    }
+  }
 }

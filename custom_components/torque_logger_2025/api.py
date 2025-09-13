@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Optional
 import logging
+import time
 
 from aiohttp import web
 import pint
@@ -11,7 +12,7 @@ from homeassistant.components.http import HomeAssistantView
 from homeassistant.util import slugify
 from homeassistant.config_entries import ConfigEntryState
 
-from .const import TORQUE_CODES
+from .const import TORQUE_CODES, SESSION_TTL_SECONDS, MAX_SESSIONS
 
 if TYPE_CHECKING:
     from .coordinator import TorqueLoggerCoordinator
@@ -67,7 +68,6 @@ LABELS = {
         "air fuel ratio (commanded)": "Rapport air/carburant (ciblé)",
         "air fuel ratio (measured)": "Rapport air/carburant (mesuré)",
         "air status": "État air secondaire",
-        "ambient air temp": "Température de l’air ambiant",
         "average trip speed (whilst moving only)": "Vit. moy. traj. (mouv.)",
         "average trip speed (whilst stopped or moving)": "Vit. moy. traj. (arrêt+mouv.)",
         "barometer (on android device)": "Baromètre (appareil)",
@@ -223,41 +223,26 @@ LABELS = {
 
 # --- Overrides par *clé* (shortName slugifié) ---
 FR_BY_KEY: dict[str, str] = {
-    # GPS bearing (2 capteurs qui coexistent)
     "gps_bearing": "Cap GPS",
     "gps_bearing_legacy_ff1007": "Cap GPS (legacy)",
-
-    # Coûts / CO2
     "co2_g_km_moy": "CO₂ g/km (moy.)",
     "co2_g_km_inst": "CO₂ g/km (inst.)",
     "cout_par_km_mile_inst": "Coût par km/mile (inst.)",
     "cout_par_km_mile_trajet": "Coût par km/mile (trajet)",
-
-    # PKE + pourcentages (versions Pct*)
     "positive_kinetic_energy_pke": "Énergie cinétique positive (PKE)",
     "pct_city_driving": "Part conduite urbaine",
     "pct_highway_driving": "Part conduite autoroute",
     "pct_idle_driving": "Part au ralenti",
-
-    # Puissance / Couple (versions shortName anglais)
     "engine_kw_at_the_wheels": "Puissance kW (roues)",
     "horsepower_at_the_wheels": "Puissance (roues)",
     "torque": "Couple",
-
-    # Rendement volumétrique (2 variantes)
     "volumetric_efficiency_calculated": "Rendement volumétrique (calculé)",
     "rendement_volumetrique_calc": "Rendement volumétrique (calculé)",
-
-    # Vitesses moyennes (versions FR de shortName)
     "vit_moy_traj_mouv": "Vitesse moy. trajet (mouv.)",
     "vit_moy_traj_arret_mouv": "Vitesse moy. trajet (arrêt + mouvement)",
-
-    # Carburant / distance / vitesse (shortName FR)
     "distance_du_trajet": "Distance du trajet",
     "vitesse_du_vehicule": "Vitesse du véhicule",
     "vitesse_du_vehicule_gps": "Vitesse (GPS)",
-
-    # Chronos – couvrir *_time et time_* + formats numériques
     "0_60mph_time": "0–60 mph (temps)",
     "time_0_60mph": "0–60 mph (temps)",
     "0_100kph_time": "0–100 km/h (temps)",
@@ -353,16 +338,52 @@ class TorqueReceiveDataView(HomeAssistantView):
         try:
             _LOGGER.debug("Torque payload: %s", dict(request.query))
 
-            # Permettre override temporaire via URL ?lang=fr
+            # 1) ?lang=fr|en (prioritaire)
+            orig_lang = None
             lang_param = (request.query.get("lang") or request.query.get("language") or "").lower()
             if lang_param in ("en", "fr"):
+                orig_lang = self.lang
                 self.lang = lang_param
+            else:
+                # 2) Fallback : Accept-Language (fr en priorité, sinon en)
+                try:
+                    al = (request.headers.get("Accept-Language") or "").lower()
+                    chosen = None
+                    for token in al.split(","):
+                        tag = token.split(";")[0].strip()
+                        if tag.startswith("fr"):
+                            chosen = "fr"
+                            break
+                        if tag.startswith("en") and chosen is None:
+                            chosen = "en"
+                    if chosen in ("en", "fr"):
+                        orig_lang = self.lang
+                        self.lang = chosen
+                except Exception:
+                    pass
 
+            # 3) Parser, publier, nettoyer
             session = self.parse_fields(request.query)
             if session:
+                # Maj activité
+                try:
+                    self.data[session]["last_seen"] = time.time()
+                except Exception:
+                    pass
                 await self._async_publish_data(session)
 
+            # Purge sessions inactives / excédentaires
+            try:
+                self._cleanup_sessions(keep=session)
+            except Exception:
+                pass
+
+            # 4) Rétablir la langue d’origine si override ponctuel
+            if orig_lang:
+                self.lang = orig_lang
+
             return web.Response(text="OK!")
+
         except Exception as err:
             # On log l’erreur mais on renvoie OK pour ne pas casser l’envoi côté Torque
             _LOGGER.exception("Error handling Torque payload: %s", err)
@@ -384,7 +405,11 @@ class TorqueReceiveDataView(HomeAssistantView):
                 "value": {},
                 "unknown": [],
                 "time": 0,
+                "last_seen": time.time(),
             }
+        else:
+            # Refresh activity timestamp for existing session
+            self.data[session]["last_seen"] = time.time()
 
         for key, value in qdata.items():
             if key.startswith("userUnit"):
@@ -493,6 +518,35 @@ class TorqueReceiveDataView(HomeAssistantView):
             "unit": unit,
             "value": value,
         }
+
+    def _cleanup_sessions(self, keep: Optional[str] = None) -> None:
+        """Purge inactive or excess sessions."""
+        try:
+            now = time.time()
+            # 1) TTL purge
+            to_delete = []
+            for key, sess in list(self.data.items()):
+                if keep is not None and key == keep:
+                    continue
+                last_seen = sess.get("last_seen")
+                if last_seen is None or now - float(last_seen) > float(SESSION_TTL_SECONDS):
+                    to_delete.append(key)
+            for key in to_delete:
+                try:
+                    self.data.pop(key, None)
+                except Exception:
+                    pass
+
+            # 2) Cap total sessions
+            if len(self.data) > MAX_SESSIONS:
+                pairs = [(k, v.get("last_seen", 0.0)) for k, v in self.data.items() if k != keep]
+                pairs.sort(key=lambda x: x[1])  # oldest first
+                excess = len(self.data) - MAX_SESSIONS
+                for i in range(excess):
+                    k = pairs[i][0]
+                    self.data.pop(k, None)
+        except Exception as err:
+            _LOGGER.debug("Session cleanup skipped: %s", err)
 
     def _get_profile(self, session: str):
         return self.data[session]["profile"]

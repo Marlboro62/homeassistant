@@ -1,31 +1,27 @@
 {
-    "config": {
-        "step": {
-            "user": {
-                "description": "Pour savoir comment configurer l’appli Torque et cette intégration, consultez le bouton d’aide.",
-                "data": {
-                    "email": "Courriel",
-                    "imperial": "Convertir en unités impériales"
-                }
-            }
-        },
-        "error": {
-            "email": "Courriel manquant configuré dans Torque Pro"
-        },
-        "abort": {
-            "single_instance_allowed": "Une seule instance est permise."
+  "config": {
+    "step": {
+      "user": {
+        "title": "Torque Logger 2025",
+        "description": "Saisissez le courriel utilisé par Torque.",
+        "data": {
+          "email": "Adresse de courriel Torque acceptée",
+          "imperial": "Convertir en unités impériales",
+          "language": "Langue par défaut"
         }
-    },
-    "options": {
-        "step": {
-            "user": {
-                "data": {
-                    "binary_sensor": "Capteur binaire activé",
-                    "device_tracker": "Suivi d’appareil activé",
-                    "sensor": "Capteur activé",
-                    "switch": "Interrupteur activé"
-                }
-            }
-        }
+      }
     }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Torque Logger 2025 – Options",
+        "description": "🛰️ Point d’accès :\n/api/torque_logger_2025\n\n🧪 Exemple :\nsession=[ID]&eml=[email]&kff1006=48.85&kff1005=2.35\n\n💡 Conseil :\najoutez &lang=fr|en pour forcer la langue.",
+        "data": {
+          "imperial": "Convertir en unités impériales",
+          "language": "Langue par défaut"
+        }
+      }
+    }
+  }
 }

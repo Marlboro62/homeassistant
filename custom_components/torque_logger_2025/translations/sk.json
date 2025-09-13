@@ -1,0 +1,27 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Torque Logger 2025",
+        "description": "Zadajte e-mail použitý v aplikácii Torque.",
+        "data": {
+          "email": "E-mail Torque na prijatie",
+          "imperial": "Konvertovať na imperiálne jednotky",
+          "language": "Predvolený jazyk"
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Torque Logger 2025 – Možnosti",
+        "description": "🛰️ Koncový bod:\n/api/torque_logger_2025\n\n🧪 Príklad:\nsession=[ID]&eml=[email]&kff1006=48.85&kff1005=2.35\n\n💡 Tip:\npridajte &lang=fr|en na vynútenie jazyka.",
+        "data": {
+          "imperial": "Konvertovať na imperiálne jednotky",
+          "language": "Predvolený jazyk"
+        }
+      }
+    }
+  }
+}

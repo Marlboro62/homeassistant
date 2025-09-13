@@ -24,10 +24,67 @@ ISSUE_URL: Final = "https://github.com/Marlboro62/homeassistant/issues"
 # CONF
 CONF_EMAIL: Final = "email"
 CONF_IMPERIAL: Final = "imperial"
+
 # Langue (défaut FR)
 CONF_LANGUAGE: Final = "language"
 DEFAULT_LANGUAGE: Final = "fr"
-SUPPORTED_LANGS: Final = {"en": "English", "fr": "Français"}
+
+# Liste des locales visibles dans l'UI (codes seulement)
+SUPPORTED_LANGS: Final = (
+    "en", "en-GB", "en-AU",
+    "fr", "fr-CA",
+    "de", "es", "it", "nl", "pl",
+    "pt-PT", "pt-BR",
+    "ru", "tr", "ar", "hi", "id", "ja", "ko", "th", "vi",
+    "zh-Hans", "zh-Hant",
+    "bg", "cs", "da", "el", "fa", "fi", "he", "hr", "hu",
+    "lt", "lv", "ms", "nb", "ro", "sk", "sl", "sv", "uk",
+    "ca", "eu", "gl", "sr"
+)
+
+# Normalisation runtime pour l'API (actuellement fr/en)
+RUNTIME_LANG_MAP: Final = {
+    "fr": "fr",
+    "fr-ca": "fr",
+    "en": "en",
+    "en-gb": "en",
+    "en-au": "en",
+}
+
+# Unit preference option keys (for conversions)
+CONF_PRESSURE_METRIC: Final = "pressure_metric"      # kPa or bar
+CONF_ECONOMY_METRIC: Final = "economy_metric"        # L/100km or km/L
+CONF_TORQUE_METRIC: Final = "torque_metric"          # Nm (canonical)
+CONF_FLOW_METRIC: Final = "flow_metric"              # g/s or kg/h
+CONF_POWER_METRIC: Final = "power_metric"            # kW or cv
+
+# Defaults
+DEFAULT_PRESSURE_METRIC: Final = "kPa"
+DEFAULT_ECONOMY_METRIC: Final = "L/100km"
+DEFAULT_TORQUE_METRIC: Final = "Nm"
+DEFAULT_FLOW_METRIC: Final = "g/s"
+
+# Unit preference option keys (Imperial-side display)
+CONF_PRESSURE_IMPERIAL: Final = "pressure_imperial"   # psi or inHg
+CONF_FLOW_IMPERIAL: Final = "flow_imperial"           # gal/min or lb/min
+CONF_TORQUE_IMPERIAL: Final = "torque_imperial"       # ft-lb or lb-ft (alias)
+CONF_POWER_IMPERIAL: Final = "power_imperial"         # hp or bhp (alias)
+
+# Defaults (Imperial)
+DEFAULT_PRESSURE_IMPERIAL: Final = "psi"
+DEFAULT_FLOW_IMPERIAL: Final = "lb/min"
+DEFAULT_TORQUE_IMPERIAL: Final = "ft-lb"
+DEFAULT_POWER_IMPERIAL: Final = "hp"
+
+DEFAULT_POWER_METRIC: Final = "kW"
+
+# Session cleanup defaults
+# Purge sessions inactive for this many seconds (30 minutes by default)
+SESSION_TTL_SECONDS: Final = 30 * 60
+
+# Keep at most this many recent sessions (evicts oldest by last_seen)
+MAX_SESSIONS: Final = 100
+
 
 # Platforms
 DEVICE_TRACKER: Final = "device_tracker"

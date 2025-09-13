@@ -1,0 +1,27 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Torque Logger 2025",
+        "description": "Introduceți adresa de e-mail utilizată în Torque.",
+        "data": {
+          "email": "Adresa de e-mail Torque acceptată",
+          "imperial": "Convertește în unități imperiale",
+          "language": "Limbă implicită"
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Torque Logger 2025 – Opțiuni",
+        "description": "🛰️ Punct final:\n/api/torque_logger_2025\n\n🧪 Exemplu:\nsession=[ID]&eml=[email]&kff1006=48.85&kff1005=2.35\n\n💡 Sfat:\nadăugați &lang=fr|en pentru a impune limba.",
+        "data": {
+          "imperial": "Convertește în unități imperiale",
+          "language": "Limbă implicită"
+        }
+      }
+    }
+  }
+}

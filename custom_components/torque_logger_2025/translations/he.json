@@ -1,0 +1,27 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Torque Logger 2025",
+        "description": "הזן את כתובת הדוא״ל שבה נעשה שימוש ב-Torque.",
+        "data": {
+          "email": "כתובת הדוא״ל של Torque לאישור",
+          "imperial": "המרה ליחידות אימפריאליות",
+          "language": "שפת ברירת המחדל"
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Torque Logger 2025 – אפשרויות",
+        "description": "🛰️ נקודת קצה:\n/api/torque_logger_2025\n\n🧪 דוגמה:\nsession=[ID]&eml=[email]&kff1006=48.85&kff1005=2.35\n\n💡 טיפ:\nניתן להוסיף &lang=fr|en כדי לאכוף שפה.",
+        "data": {
+          "imperial": "המרה ליחידות אימפריאליות",
+          "language": "שפת ברירת המחדל"
+        }
+      }
+    }
+  }
+}

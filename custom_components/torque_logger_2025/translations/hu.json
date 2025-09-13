@@ -1,0 +1,27 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Torque Logger 2025",
+        "description": "Adja meg a Torque-ban használt e-mail-címet.",
+        "data": {
+          "email": "Elfogadandó Torque e-mail-cím",
+          "imperial": "Átváltás angolszász mértékegységekre",
+          "language": "Alapértelmezett nyelv"
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Torque Logger 2025 – Beállítások",
+        "description": "🛰️ Végpont:\n/api/torque_logger_2025\n\n🧪 Példa lekérdezés:\nsession=[ID]&eml=[email]&kff1006=48.85&kff1005=2.35\n\n💡 Tipp:\nAdja hozzá a &lang=fr|en paramétert a nyelv kikényszerítéséhez.",
+        "data": {
+          "imperial": "Átváltás angolszász mértékegységekre",
+          "language": "Alapértelmezett nyelv"
+        }
+      }
+    }
+  }
+}

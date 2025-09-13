@@ -33,10 +33,9 @@ class TorqueLoggerFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         self._abort_if_unique_id_configured()
 
         # Options (label/value) pour le SelectSelector
-        lang_options = [
-            {"label": label, "value": code}
-            for code, label in sorted(SUPPORTED_LANGS.items(), key=lambda kv: kv[1])
-        ]
+        LANG_LABELS = { "ar": "العربية", "de": "Deutsch", "en": "English", "en-AU": "English (AU)", "en-GB": "English (UK)", "es": "Español", "fr": "Français", "fr-CA": "Français (CA)", "hi": "हिन्दी", "id": "Indonesia", "it": "Italiano", "ja": "日本語", "ko": "한국어", "nl": "Nederlands", "pl": "Polski", "pt-BR": "Português (BR)", "pt-PT": "Português (PT)", "ru": "Русский", "th": "ไทย", "tr": "Türkçe", "vi": "Tiếng Việt", "zh-Hans": "简体中文", "bg": "Български", "cs": "Čeština", "da": "Dansk", "el": "Ελληνικά", "fa": "فارسی", "fi": "Suomi", "he": "עברית", "hr": "Hrvatski", "hu": "Magyar", "lt": "Lietuvių", "lv": "Latviešu", "ms": "Bahasa Melayu", "nb": "Norsk (Bokmål)", "ro": "Română", "sk": "Slovenčina", "sl": "Slovenščina", "sv": "Svenska", "uk": "Українська", "zh-Hant": "繁體中文", "ca": "Català", "eu": "Euskara", "gl": "Galego", "sr": "Српски" }
+        lang_options = [{"label": LANG_LABELS.get(code, code), "value": code} for code in SUPPORTED_LANGS]
+
 
         if user_input is not None:
             data = {
@@ -76,10 +75,16 @@ class TorqueLoggerOptionsFlowHandler(config_entries.OptionsFlow):
     async def async_step_init(self, user_input: dict | None = None):
         """Gérer le formulaire d’options."""
         # Prépare les options du sélecteur (label / value)
-        lang_options = [
-            {"label": label, "value": code}
-            for code, label in sorted(SUPPORTED_LANGS.items(), key=lambda kv: kv[1])
-        ]
+        LANG_LABELS = {
+            "en": "English", "en-GB": "English (UK)", "en-AU": "English (AU)",
+            "fr": "Français", "fr-CA": "Français (CA)",
+            "de": "Deutsch", "es": "Español", "it": "Italiano", "nl": "Nederlands", "pl": "Polski",
+            "pt-PT": "Português (PT)", "pt-BR": "Português (BR)",
+            "ru": "Русский", "tr": "Türkçe", "ar": "العربية", "hi": "हिन्दी", "id": "Indonesia",
+            "ja": "日本語", "ko": "한국어", "th": "ไทย", "vi": "Tiếng Việt", "zh-Hans": "简体中文"
+        }
+        lang_options = [{"label": LANG_LABELS.get(code, code), "value": code} for code in SUPPORTED_LANGS]
+
 
         if user_input is not None:
             # On stocke uniquement les options (impérial/langue)

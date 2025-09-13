@@ -1,0 +1,27 @@
+{
+  "options": {
+    "step": {
+      "init": {
+        "description": "🛰️ Punt d'accés:\n/api/torque_logger_2025\n\n🧪 Exemple:\nsession=[ID]&eml=[email]&kff1006=48.85&kff1005=2.35\n\n💡 Consell:\nafegeix &lang=fr|en per forçar l'idioma.",
+        "title": "Torque Logger 2025 – Opcions",
+        "data": {
+          "imperial": "Converteix a unitats imperials",
+          "language": "Idioma per defecte"
+        }
+      }
+    }
+  },
+  "config": {
+    "step": {
+      "user": {
+        "title": "Torque Logger 2025",
+        "description": "Introdueix el correu electrònic de Torque.",
+        "data": {
+          "email": "Correu electrònic de Torque a acceptar",
+          "imperial": "Converteix a unitats imperials",
+          "language": "Idioma per defecte"
+        }
+      }
+    }
+  }
+}

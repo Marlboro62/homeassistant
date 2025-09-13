@@ -1,31 +1,27 @@
 {
-    "config": {
-        "step": {
-            "user": {
-                "description": "有关如何设置 Torque 应用和此集成的信息，请查看帮助按钮。",
-                "data": {
-                    "email": "电子邮件",
-                    "imperial": "转换为英制单位"
-                }
-            }
-        },
-        "error": {
-            "email": "Torque Pro 中缺少已配置的电子邮件"
-        },
-        "abort": {
-            "single_instance_allowed": "只允许一个实例。"
+  "config": {
+    "step": {
+      "user": {
+        "title": "Torque Logger 2025",
+        "description": "输入在 Torque 中使用的电子邮件地址。",
+        "data": {
+          "email": "要接受的 Torque 电子邮件",
+          "imperial": "转换为英制单位",
+          "language": "默认语言"
         }
-    },
-    "options": {
-        "step": {
-            "user": {
-                "data": {
-                    "binary_sensor": "二进制传感器已启用",
-                    "device_tracker": "设备跟踪器已启用",
-                    "sensor": "传感器已启用",
-                    "switch": "开关已启用"
-                }
-            }
-        }
+      }
     }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Torque Logger 2025 – 选项",
+        "description": "🛰️ 端点：\n/api/torque_logger_2025\n\n🧪 示例：\nsession=[ID]&eml=[email]&kff1006=48.85&kff1005=2.35\n\n💡 提示：\n添加 &lang=fr|en 以强制语言。",
+        "data": {
+          "imperial": "转换为英制单位",
+          "language": "默认语言"
+        }
+      }
+    }
+  }
 }

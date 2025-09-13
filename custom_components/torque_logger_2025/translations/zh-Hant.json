@@ -1,0 +1,27 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Torque Logger 2025",
+        "description": "請輸入在 Torque 中使用的電子郵件地址。",
+        "data": {
+          "email": "要接受的 Torque 電子郵件",
+          "imperial": "轉換為英制單位",
+          "language": "預設語言"
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Torque Logger 2025 – 選項",
+        "description": "🛰️ 端點：\n/api/torque_logger_2025\n\n🧪 範例：\nsession=[ID]&eml=[email]&kff1006=48.85&kff1005=2.35\n\n💡 提示：\n新增 &lang=fr|en 以強制語言。",
+        "data": {
+          "imperial": "轉換為英制單位",
+          "language": "預設語言"
+        }
+      }
+    }
+  }
+}

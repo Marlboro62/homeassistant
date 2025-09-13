@@ -1,0 +1,27 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Torque Logger 2025",
+        "description": "Introduza o enderezo de correo usado en Torque.",
+        "data": {
+          "email": "Enderezo de correo de Torque a aceptar",
+          "imperial": "Converter a unidades imperiais",
+          "language": "Idioma predeterminado"
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Torque Logger 2025 – Opcións",
+        "description": "🛰️ Punto de acceso:\n/api/torque_logger_2025\n\n🧪 Exemplo:\nsession=[ID]&eml=[email]&kff1006=48.85&kff1005=2.35\n\n💡 Consello:\nEngada &lang=fr|en para forzar o idioma.",
+        "data": {
+          "imperial": "Converter a unidades imperiais",
+          "language": "Idioma predeterminado"
+        }
+      }
+    }
+  }
+}

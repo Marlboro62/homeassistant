@@ -1,62 +1,27 @@
 {
-    "config": {
-        "step": {
-            "user": {
-                "description": "Voor informatie over hoe je de Torque-app en deze integratie instelt, klik op de helpknop.",
-                "data": {
-                    "email": "E-mail",
-                    "imperial": "Omzetten naar imperiale eenheden"
-                }
-            }
-        },
-        "error": {
-            "email": "E-mail ontbreekt die is geconfigureerd in Torque Pro"
-        },
-        "abort": {
-            "single_instance_allowed": "Er is slechts één instantie toegestaan."
+  "config": {
+    "step": {
+      "user": {
+        "title": "Torque Logger 2025",
+        "description": "Voer het in Torque gebruikte e-mailadres in.",
+        "data": {
+          "email": "Te accepteren Torque-e-mailadres",
+          "imperial": "Omzetten naar imperiale eenheden",
+          "language": "Standaardtaal"
         }
-    },
-    "options": {
-        "step": {
-            "user": {
-                "data": {
-                    "binary_sensor": "Binaire sensor ingeschakeld",
-                    "device_tracker": "Apparaattracker ingeschakeld",
-                    "sensor": "Sensor ingeschakeld",
-                    "switch": "Schakelaar ingeschakeld"
-                }
-            }
-        }
+      }
     }
-}
-{
-    "config": {
-        "step": {
-            "user": {
-                "description": "Voor informatie over hoe je de Torque-app en deze integratie instelt, klik op de helpknop.",
-                "data": {
-                    "email": "E-mail",
-                    "imperial": "Omzetten naar imperiale eenheden"
-                }
-            }
-        },
-        "error": {
-            "email": "E-mail ontbreekt die is geconfigureerd in Torque Pro"
-        },
-        "abort": {
-            "single_instance_allowed": "Er is slechts één instantie toegestaan."
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Torque Logger 2025 – Opties",
+        "description": "🛰️ Eindpunt:\n/api/torque_logger_2025\n\n🧪 Voorbeeld:\nsession=[ID]&eml=[email]&kff1006=48.85&kff1005=2.35\n\n💡 Tip:\nvoeg &lang=fr|en toe om de taal te forceren.",
+        "data": {
+          "imperial": "Omzetten naar imperiale eenheden",
+          "language": "Standaardtaal"
         }
-    },
-    "options": {
-        "step": {
-            "user": {
-                "data": {
-                    "binary_sensor": "Binaire sensor ingeschakeld",
-                    "device_tracker": "Apparaattracker ingeschakeld",
-                    "sensor": "Sensor ingeschakeld",
-                    "switch": "Schakelaar ingeschakeld"
-                }
-            }
-        }
+      }
     }
+  }
 }

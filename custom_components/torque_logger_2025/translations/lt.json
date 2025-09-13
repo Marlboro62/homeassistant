@@ -1,0 +1,27 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Torque Logger 2025",
+        "description": "Įveskite „Torque“ naudojamą el. pašto adresą.",
+        "data": {
+          "email": "Priimamas „Torque“ el. pašto adresas",
+          "imperial": "Konvertuoti į imperinius vienetus",
+          "language": "Numatytoji kalba"
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Torque Logger 2025 – Parinktys",
+        "description": "🛰️ Galinis taškas:\n/api/torque_logger_2025\n\n🧪 Pavyzdys:\nsession=[ID]&eml=[email]&kff1006=48.85&kff1005=2.35\n\n💡 Patarimas:\npridėkite &lang=fr|en, kad priverstinai nustatytumėte kalbą.",
+        "data": {
+          "imperial": "Konvertuoti į imperinius vienetus",
+          "language": "Numatytoji kalba"
+        }
+      }
+    }
+  }
+}

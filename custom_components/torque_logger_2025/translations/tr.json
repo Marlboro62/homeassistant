@@ -1,31 +1,27 @@
 {
-    "config": {
-        "step": {
-            "user": {
-                "description": "Torque uygulamasını ve bu entegrasyonu nasıl kuracağınız hakkında bilgi için yardım düğmesine bakın.",
-                "data": {
-                    "email": "E-posta",
-                    "imperial": "İmparatorluk birimlerine dönüştür"
-                }
-            }
-        },
-        "error": {
-            "email": "Torque Pro’da yapılandırılmış e-posta eksik"
-        },
-        "abort": {
-            "single_instance_allowed": "Yalnızca tek bir örneğe izin verilir."
+  "config": {
+    "step": {
+      "user": {
+        "title": "Torque Logger 2025",
+        "description": "Torque'da kullandığınız e-posta adresini girin.",
+        "data": {
+          "email": "Kabul edilecek Torque e-posta adresi",
+          "imperial": "İmperyal birimlere dönüştür",
+          "language": "Varsayılan dil"
         }
-    },
-    "options": {
-        "step": {
-            "user": {
-                "data": {
-                    "binary_sensor": "İkili sensör etkin",
-                    "device_tracker": "Cihaz izleyici etkin",
-                    "sensor": "Sensör etkin",
-                    "switch": "Anahtar etkin"
-                }
-            }
-        }
+      }
     }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Torque Logger 2025 – Seçenekler",
+        "description": "🛰️ Uç nokta:\n/api/torque_logger_2025\n\n🧪 Örnek sorgu:\nsession=[ID]&eml=[email]&kff1006=48.85&kff1005=2.35\n\n💡 İpucu:\nDili zorlamak için &lang=fr|en ekleyin.",
+        "data": {
+          "imperial": "İmperyal birimlere dönüştür",
+          "language": "Varsayılan dil"
+        }
+      }
+    }
+  }
 }

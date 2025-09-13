@@ -1,31 +1,27 @@
 {
-    "config": {
-        "step": {
-            "user": {
-                "description": "Torqueアプリとこの統合の設定方法については、ヘルプボタンを参照してください。",
-                "data": {
-                    "email": "メールアドレス",
-                    "imperial": "ヤード・ポンド法に変換"
-                }
-            }
-        },
-        "error": {
-            "email": "Torque Pro に設定されたメールアドレスがありません"
-        },
-        "abort": {
-            "single_instance_allowed": "インスタンスは1つのみ許可されています。"
+  "config": {
+    "step": {
+      "user": {
+        "title": "Torque Logger 2025",
+        "description": "Torque で使用するメールアドレスを入力してください。",
+        "data": {
+          "email": "受け付ける Torque のメールアドレス",
+          "imperial": "ヤード・ポンド法の単位に変換",
+          "language": "既定の言語"
         }
-    },
-    "options": {
-        "step": {
-            "user": {
-                "data": {
-                    "binary_sensor": "バイナリセンサー有効",
-                    "device_tracker": "デバイストラッカー有効",
-                    "sensor": "センサー有効",
-                    "switch": "スイッチ有効"
-                }
-            }
-        }
+      }
     }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Torque Logger 2025 – オプション",
+        "description": "🛰️ エンドポイント:\n/api/torque_logger_2025\n\n🧪 例:\nsession=[ID]&eml=[email]&kff1006=48.85&kff1005=2.35\n\n💡 ヒント:\n言語を強制するには &lang=fr|en を追加します。",
+        "data": {
+          "imperial": "ヤード・ポンド法の単位に変換",
+          "language": "既定の言語"
+        }
+      }
+    }
+  }
 }

@@ -1,0 +1,27 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Torque Logger 2025",
+        "description": "Ievadiet e-pasta adresi, ko izmantojat lietotnē Torque.",
+        "data": {
+          "email": "Torque e-pasta adrese, kuru pieņemt",
+          "imperial": "Pārvērst imperiālajās vienībās",
+          "language": "Noklusējuma valoda"
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Torque Logger 2025 – Iestatījumi",
+        "description": "🛰️ Galapunkts:\n/api/torque_logger_2025\n\n🧪 Piemērs:\nsession=[ID]&eml=[email]&kff1006=48.85&kff1005=2.35\n\n💡 Padoms:\npievienojiet &lang=fr|en, lai piespiestu valodu.",
+        "data": {
+          "imperial": "Pārvērst imperiālajās vienībās",
+          "language": "Noklusējuma valoda"
+        }
+      }
+    }
+  }
+}

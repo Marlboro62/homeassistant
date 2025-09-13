@@ -1,0 +1,27 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Torque Logger 2025",
+        "description": "Vnesite e-poštni naslov, uporabljen v aplikaciji Torque.",
+        "data": {
+          "email": "E-poštni naslov Torque za sprejem",
+          "imperial": "Pretvori v imperialne enote",
+          "language": "Privzeti jezik"
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Torque Logger 2025 – Možnosti",
+        "description": "🛰️ Končna točka:\n/api/torque_logger_2025\n\n🧪 Primer:\nsession=[ID]&eml=[email]&kff1006=48.85&kff1005=2.35\n\n💡 Namig:\ndodajte &lang=fr|en za prisilno izbiro jezika.",
+        "data": {
+          "imperial": "Pretvori v imperialne enote",
+          "language": "Privzeti jezik"
+        }
+      }
+    }
+  }
+}
