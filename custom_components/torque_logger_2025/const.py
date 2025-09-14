@@ -98,6 +98,7 @@ FR:
 Version: {VERSION}
 Il s'agit d'une intégration personnalisée !
 Si vous rencontrez des problèmes, vous pouvez ouvrir un ticket ici :
+{ISSUE_URL}
 -------------------------------------------------------------------
 EN:
 {NAME}
